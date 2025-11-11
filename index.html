@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loco X Todo | 31 Sabores de Pizza Libre</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <link rel="stylesheet" href="css/layout.css">
+</head>
+<body>
+    
+    <header id="main-header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            
+            <a class="navbar-brand" href="#hero-section">
+                <img src="assets/images/logo_locoxtodo.png" alt="Loco X Todo" height="40">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="#hero-section">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pedido-section">Pedir para Llevar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#reservas-grupos">Reservas (Grupos)</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#bebidas-menu-local">Menú Local</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#ubicacion-contacto">Ubicación</a></li>
+                </ul>
+                
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link btn-secondary-cart" href="#">
+                            🛒 <span id="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+        </header>
+
+    <main>
+        
+        <section id="hero-section"class="d-flex align-items-center text-center" >
+            <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+                
+                <h1 class="display-2 text-uppercase mb-3">
+                    <span class="text-white">Locura Total:</span>
+                    <br>
+                    <span class="hero-highlight">31 Sabores de Pizza Libre</span>
+                </h1>
+                
+                <p class="lead text-white mb-5 d-none d-md-block">
+                    Arma tu pedido, elige tus porciones favoritas y disfruta de la mejor experiencia de pizza a domicilio.
+                </p>
+                
+                <a href="#pedido-section" class="btn-primary-cta btn-lg shadow-lg">
+                    ¡Arma tu Pizza Ahora!
+                </a>
+            </div>
+        </div>
+    </div>
+            </section>
+
+        <section id="pedido-section" class="py-5">
+
+            <div class="container">
+        <h2 class="text-center mb-5">🍕 Arma tu Pizza para Llevar (1 a 4 Sabores)</h2>
+        
+        <div class="row">
+            
+            <div class="col-md-7">
+                <div class="input-group mb-4">
+                    <input type="text" id="sabor-search" class="form-control" placeholder="🔍 Busca un sabor (Muzzarella, Roquefort, etc.)">
+                </div>
+                
+                <div id="sabores-list-container" class="sabores-grid">
+                    <p>Cargando sabores...</p>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="p-4 rounded shadow-sm" style="background-color: var(--color-text-light);">
+                    <h3 class="mb-3">Tu Pizza Actual <small id="summary-status" class="text-muted">(0 de 4 sabores)</small></h3>
+                    
+                    <ul id="pizza-summary-list" class="list-group mb-4">
+                        </ul>
+                    
+                    <button onclick="pizzaActual = []; updatePizzaSummary(); updateSaborCards();" class="btn btn-sm btn-secondary mb-3">
+                        Limpiar Sabores de Pizza
+                    </button>
+                    
+                    <hr>
+
+                    <button id="btn-add-to-cart" class="btn-primary-cta w-100 mb-2" onclick="addToCart(true)"  disabled>
+                        AÑADIR AL CARRITO Y CONTINUAR
+                    </button>
+                    <button id="btn-go-to-checkout" class="btn-secondary w-100" onclick="addToCart(false)" disabled>
+                        AÑADIR AL CARRITO E IR A PAGAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            </section>
+
+        <section id="bebidas-section" class="py-5 bg-white" style="display: none;">
+    <div class="container">
+        <h2 class="text-center mb-5">🥤 Paso 2: ¿Acompañamos con Bebidas?</h2>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                
+                <div id="bebidas-list-container" class="bebidas-grid">
+                    <p class="text-center">Cargando catálogo de bebidas...</p>
+                </div>
+                
+                <div class="mt-5 text-center">
+                    <button id="btn-finish-order" class="btn-primary-cta btn-lg shadow-lg">
+                        ✅ Terminar Pedido e Ir a Pagar
+                    </button>
+                    
+                    <button id="btn-keep-buying-pizzas" class="btn-secondary mt-3">
+                        🍕 Añadir Otra Pizza
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+        <section id="reservas-grupos">
+            </section>
+
+        <section id="ubicacion-contacto">
+            </section>
+        
+    </main>
+
+    <footer id="main-footer">
+        </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script src="js/dataLoader.js"></script> 
+    <script src="js/pizzaConfig.js"></script>
+    <script src="js/bookingForm.js"></script> 
+    <script src="js/whatsapp.js"></script> 
+    
+</body>
+</html>

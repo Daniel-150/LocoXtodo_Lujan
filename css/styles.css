@@ -1,0 +1,193 @@
+/* ========================================================= */
+/* 1. PALETA DE COLORES Y TIPOGRAFÍA (VARIABLES GLOBALES) */
+/* ========================================================= */
+:root {
+    /* Colores de Marca */
+    --color-primary: #E83E8C;        /* Rojo / Fucsia Fuerte (Para CTAs, Destacados) */
+    --color-secondary: #FF8C00;      /* Naranja Vibrante (Para Botones Secundarios, Precios) */
+    
+    /* Colores Neutros y de Fondo */
+    --color-background-warm: #F8F4E3; /* Beige Suave / Crema (Fondo Principal) */
+    --color-text-dark: #1C1C1C;       /* Negro Intenso (Para Legibilidad) */
+    --color-text-light: #FFFFFF;      /* Blanco Puro */
+
+    /* Fuentes */
+    --font-heading: 'Montserrat', sans-serif; /* Títulos (H1, H2) - Negrita */
+    --font-body: 'Open Sans', sans-serif;    /* Cuerpo de texto - Legibilidad */
+}
+
+/* ========================================================= */
+/* 2. RESET BÁSICO Y ESTILOS GLOBALES */
+/* ========================================================= */
+
+/* Establece el box-sizing para facilitar el diseño */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text-dark);
+    background-color: var(--color-background-warm); /* Fondo cálido para todo el sitio */
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos para encabezados (H1, H2, etc.) */
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    color: var(--color-text-dark);
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+/* ========================================================= */
+/* ... (Sección 3: ESTILOS DEL HEADER) ... */
+/* ========================================================= */
+
+
+#main-header {
+    /* Mantenemos el fondo oscuro de madera */
+    background-color: var(--color-text-dark); 
+    background-image: url('../assets/images/wood_texture_dark.jpg');
+    /* Quitamos el padding global para usar el de Bootstrap */
+    padding: 0; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para los enlaces de navegación de Bootstrap */
+.navbar-nav .nav-link {
+    color: var(--color-text-light); /* Texto blanco sobre fondo oscuro */
+    font-weight: 600;
+    margin-left: 10px;
+    margin-right: 10px;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--color-secondary); /* Resaltado Naranja al pasar el mouse */
+}
+
+/* Estilo del botón de Hamburguesa (Navbar Toggler) */
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-toggler-icon {
+    /* Usa un filtro o SVG para hacer que el icono sea blanco/claro */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Estilo para el ícono del carrito */
+.btn-secondary-cart {
+    background-color: var(--color-primary); /* Color Fucsia/Rojo para el carrito */
+    border-radius: 50px;
+    padding: 5px 15px;
+    color: var(--color-text-light) !important;
+}
+/* ========================================================= */
+/* 4. ESTILOS DE BOTONES (CTAs) */
+/* ========================================================= */
+
+.btn-primary-cta {
+    background-color: var(--color-primary); /* Fucsia/Rojo para el CTA principal */
+    color: var(--color-text-light);
+    font-family: var(--font-heading);
+    font-size: 1.1em;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.1s;
+}
+
+.btn-primary-cta:hover {
+    background-color: #f755a5; /* Un tono más claro al pasar el mouse */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+    background-color: var(--color-secondary); /* Naranja para botones secundarios (Ej: ir a pagar) */
+    color: var(--color-text-dark);
+    padding: 8px 20px;
+    border: none;
+    border-radius: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.btn-secondary:hover {
+    opacity: 0.9;
+}
+
+/* ========================================================= */
+/* 5. ESTILOS DEL FOOTER */
+/* ========================================================= */
+
+#main-footer {
+    background-color: var(--color-text-dark);
+    background-image: url('../assets/images/wood_texture_dark.jpg'); /* Mismo fondo de madera */
+    color: var(--color-text-light);
+    padding: 20px;
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* ========================================================= */
+/* 6. ESTILOS DE LA SECCIÓN HERO */
+/* ========================================================= */
+
+#hero-section {
+    /* Mínima altura: 85% del viewport height (vh) */
+    min-height: 85vh; 
+    
+    /* Imagen de Fondo (¡Debes tener una imagen de pizza de alta calidad en esta ruta!) */
+    background: url('../img/Background1.jpg') no-repeat center center/cover;
+    position: relative; /* Necesario para el overlay */
+}
+
+/* Sombreado Oscuro (Overlay) para mejorar la legibilidad del texto blanco */
+#hero-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* Negro con 40% de opacidad */
+    z-index: 1; /* Asegura que el overlay esté bajo el contenido */
+}
+
+/* El contenido (título y botón) debe estar por encima del overlay */
+#hero-section .container {
+    z-index: 2; 
+    position: relative;
+}
+
+/* Estilo para la parte destacada del H1 (31 Sabores...) */
+.hero-highlight {
+    color: var(--color-primary); /* Usa el color Fucsia/Rojo */
+    /* Para darle un efecto de borde o sombra de texto para que resalte más */
+    text-shadow: 2px 2px 4px var(--color-text-dark); 
+    display: inline-block; /* Permite aplicar el color al texto */
+}
+
+/* Estilos de texto en la sección hero */
+#hero-section h1, 
+#hero-section p {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra de texto suave */
+}
+
+/* Media Query: Ajuste de tamaño en dispositivos móviles */
+@media (max-width: 768px) {
+    #hero-section {
+        /* Menos altura para no ocupar toda la pantalla en móvil */
+        min-height: 70vh; 
+    }
+    
+    #hero-section h1 {
+        /* Reducir un poco el tamaño de la fuente para que quepa bien */
+        font-size: 2.5rem; 
+    }
+}
