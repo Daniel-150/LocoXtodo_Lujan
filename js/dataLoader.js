@@ -4,7 +4,7 @@
 
 // !!! MUY IMPORTANTE: Reemplaza esta URL con la que obtengas al publicar
 //    tu Google Sheet (Archivo > Compartir > Publicar en la web > Formato CSV o JSON).
-const DATA_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQslem2QSxQVorpfXGxSw90U9UvH6Ng1mFIP0G6inFAgDXFhaTbLc1cVgckOM1surHHWf9iMI0r85tr/pub?output=json'; 
+const DATA_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQslem2QSxQVorpfXGxSw90U9UvH6Ng1mFIP0G6inFAgDXFhaTbLc1cVgckOM1surHHWf9iMI0r85tr/pub?output=csv'; 
 
 // Array global para almacenar los sabores y precios cargados
 let allSabores = [];
