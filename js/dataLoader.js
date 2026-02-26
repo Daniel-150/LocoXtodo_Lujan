@@ -4,8 +4,7 @@
 
 /**
  * DATOS LOCALES: 
- * Al guardarlos aquí, tu página funcionará siempre, incluso sin internet.
- * Ideal para tu portfolio en GitHub Pages.
+ * Al guardarlos aquí, tu página funcionará siempre.
  */
 
 const allSabores = [
@@ -30,57 +29,35 @@ const ALL_PRODUCTOS = [
 
 const PIZZA_PRECIO_BASE = 13000;
 
-/**
- * Función que simula la carga de datos.
- * Mantenemos la estructura para no romper el resto de tu app.
- 
+// MODIFICACIÓN DE SEGURIDAD PARA EVITAR BUCLES
+let yaCargado = false; 
+
 async function loadPizzaData() {
-    console.log("Iniciando carga de datos locales...");
+    if (yaCargado) return; 
     
+    console.log("Cargando datos locales...");
+    yaCargado = true; 
+
     try {
-        // Simulamos una pequeña espera para que se vea el "Cargando..." un milisegundo
+        // Un pequeño delay para asegurar que el DOM esté listo
         setTimeout(() => {
-            console.log('Datos de sabores cargados:', allSabores.length);
-            
-            // Verificamos si la función existe en el window antes de llamarla
             if (typeof window.initializeConfigurator === 'function') {
                 window.initializeConfigurator();
+                console.log("¡Configurador inicializado!");
             } else {
-                console.warn("initializeConfigurator aún no está disponible.");
+                console.warn("initializeConfigurator no detectado todavía.");
             }
         }, 100);
 
     } catch (error) {
-        console.error('Error al procesar datos:', error);
-        const container = document.getElementById('pedido-list-container');
+        console.error('Error al cargar datos:', error);
+        const container = document.getElementById('sabores-list-container');
         if (container) container.innerHTML = '<p class="text-danger">Error al cargar el menú.</p>';
     }
 }
 
-// Iniciar la carga
-document.addEventListener('DOMContentLoaded', loadPizzaData);
-
-// Exportar para pizzaConfig.js
-export { allSabores, allBebidas, ALL_PRODUCTOS, PIZZA_PRECIO_BASE };*/
-
-// MODIFICACIÓN DE SEGURIDAD
-let yaCargado = false; // Bandera para evitar el bucle
-
-async function loadPizzaData() {
-    if (yaCargado) return; // Si ya cargó una vez, no hagas nada más
-    
-    console.log("Cargando datos...");
-    yaCargado = true; 
-
-    try {
-        // Ejecutamos la lógica de inicio
-        if (typeof window.initializeConfigurator === 'function') {
-            window.initializeConfigurator();
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-// En lugar de usar DOMContentLoaded, probemos llamarla una sola vez manualmente
+// Iniciar la carga manualmente
 loadPizzaData();
+
+// EXPORTACIÓN IMPORTANTE (Esto es lo que fallaba)
+export { allSabores, allBebidas, ALL_PRODUCTOS, PIZZA_PRECIO_BASE };
