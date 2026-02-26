@@ -33,7 +33,7 @@ const PIZZA_PRECIO_BASE = 13000;
 /**
  * Función que simula la carga de datos.
  * Mantenemos la estructura para no romper el resto de tu app.
- */
+ 
 async function loadPizzaData() {
     console.log("Iniciando carga de datos locales...");
     
@@ -61,4 +61,26 @@ async function loadPizzaData() {
 document.addEventListener('DOMContentLoaded', loadPizzaData);
 
 // Exportar para pizzaConfig.js
-export { allSabores, allBebidas, ALL_PRODUCTOS, PIZZA_PRECIO_BASE };
+export { allSabores, allBebidas, ALL_PRODUCTOS, PIZZA_PRECIO_BASE };*/
+
+// MODIFICACIÓN DE SEGURIDAD
+let yaCargado = false; // Bandera para evitar el bucle
+
+async function loadPizzaData() {
+    if (yaCargado) return; // Si ya cargó una vez, no hagas nada más
+    
+    console.log("Cargando datos...");
+    yaCargado = true; 
+
+    try {
+        // Ejecutamos la lógica de inicio
+        if (typeof window.initializeConfigurator === 'function') {
+            window.initializeConfigurator();
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// En lugar de usar DOMContentLoaded, probemos llamarla una sola vez manualmente
+loadPizzaData();
