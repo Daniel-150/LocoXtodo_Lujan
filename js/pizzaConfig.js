@@ -2,34 +2,44 @@
 // pizzaConfig.js: Lógica del Configurador y Carrito
 // =======================================================
 
-// 1. UNIFICAMOS IMPORTS (Solo al principio del archivo)
 import { allSabores, allBebidas, ALL_PRODUCTOS } from './dataLoader.js'; 
 
-// 2. VARIABLES GLOBALES
+// 1. VARIABLES GLOBALES
 const MAX_SABORES = 4;
-let pizzaActual = []; // Sabores de la pizza que estás armando ahora
-let currentCart = [];  // Todos los productos (pizzas terminadas y bebidas)
+let pizzaActual = []; 
+let currentCart = [];
+let configuradorInicializado = false; // CANDADO 1: Variable de control
 
 /**
- * Inicializa el configurador al cargar la página.
+ * Inicializa el configurador.
  */
 window.initializeConfigurator = function() {
     const saboresContainer = document.getElementById('sabores-list-container');
     if (!saboresContainer) return;
 
-    // Si dataLoader falló, allSabores estará vacío. 
-    // Mostramos un mensaje si no hay datos.
-    if (!allSabores || allSabores.length === 0) {
-        saboresContainer.innerHTML = "<p>Error al cargar sabores. Verifica la conexión con el Excel.</p>";
+    // CANDADO 2: Si ya hay contenido o la variable es true, abortamos la carga
+    if (configuradorInicializado || saboresContainer.querySelectorAll('.sabor-card').length > 0) {
+        console.log("Configurador ya detectado. Abortando duplicación.");
         return;
     }
 
+    // Marcamos como inicializado
+    configuradorInicializado = true;
+
+    if (!allSabores || allSabores.length === 0) {
+        saboresContainer.innerHTML = "<p>No hay sabores disponibles.</p>";
+        return;
+    }
+
+    // Generamos el HTML
     const htmlContent = allSabores.map(createSaborCard).join('');
     saboresContainer.innerHTML = htmlContent;
 
-    // Conectar buscador
+    // Conectar el buscador
     const searchInput = document.getElementById('sabor-search');
-    if (searchInput) searchInput.addEventListener('input', filterSabores);
+    if (searchInput) {
+        searchInput.addEventListener('input', filterSabores);
+    }
 };
 
 /**
@@ -71,7 +81,7 @@ window.toggleSabor = function(nombreSabor) {
 };
 
 /**
- * Actualiza el resumen visual (la lista de 1, 2, 3, 4).
+ * Actualiza el resumen lateral de la pizza.
  */
 function updatePizzaSummary() {
     const summaryContainer = document.getElementById('pizza-summary-list');
@@ -90,11 +100,12 @@ function updatePizzaSummary() {
         summaryContainer.appendChild(listItem);
     }
     
-    document.getElementById('summary-status').textContent = `(${pizzaActual.length} de ${MAX_SABORES} sabores)`;
+    const statusLabel = document.getElementById('summary-status');
+    if (statusLabel) statusLabel.textContent = `(${pizzaActual.length} de ${MAX_SABORES} sabores)`;
 }
 
 /**
- * Añade la pizza armada al carrito.
+ * Añade la pizza al carrito.
  */
 window.addToCart = function(isContinuing) {
     if (pizzaActual.length === 0) {
@@ -102,12 +113,12 @@ window.addToCart = function(isContinuing) {
         return;
     }
 
-    const productInfo = ALL_PRODUCTOS.find(p => p.nombre.includes('Especial') && p.tamaño === 'entera');
+    const productInfo = ALL_PRODUCTOS.find(p => p.nombre.includes('Especial'));
 
     const newPizza = {
         id: Date.now(),
         tipo: 'pizza',
-        nombreProducto: productInfo ? productInfo.nombre : 'Pizza Especial',
+        nombreProducto: 'Pizza Especial',
         sabores: [...pizzaActual],
         precioUnidad: productInfo ? productInfo.precioBase : 13000,
         cantidad: 1
@@ -115,13 +126,13 @@ window.addToCart = function(isContinuing) {
 
     currentCart.push(newPizza);
     
-    // Resetear para la próxima
+    // Limpiar selección
     pizzaActual = [];
     updatePizzaSummary(); 
     updateSaborCards();
     updateCartDisplay(); 
 
-    alert("¡Pizza añadida!");
+    alert("¡Pizza añadida al carrito!");
     
     if (isContinuing) {
         showBebidasSection();
@@ -129,18 +140,15 @@ window.addToCart = function(isContinuing) {
 };
 
 /**
- * Calcula totales y actualiza el contador del carrito.
+ * Actualiza el contador del carrito en el header.
  */
 window.updateCartDisplay = function() {
-    const totalItems = currentCart.length;
     const cartCountElement = document.getElementById('cart-count');
-    if (cartCountElement) cartCountElement.textContent = totalItems;
-    
-    console.log("Items en carrito:", currentCart);
+    if (cartCountElement) cartCountElement.textContent = currentCart.length;
 };
 
 /**
- * Filtro de búsqueda.
+ * Lógica del buscador de sabores.
  */
 function filterSabores(event) {
     const searchTerm = event.target.value.toLowerCase();
@@ -163,17 +171,19 @@ function updateSaborCards() {
         if (!button) return;
 
         if (pizzaActual.includes(nombre)) {
-            button.classList.replace('btn-secondary', 'btn-primary-cta');
+            button.classList.remove('btn-secondary');
+            button.classList.add('btn-primary-cta');
             button.textContent = '✔';
         } else {
-            button.classList.replace('btn-primary-cta', 'btn-secondary');
+            button.classList.remove('btn-primary-cta');
+            button.classList.add('btn-secondary');
             button.textContent = 'Seleccionar';
         }
     });
 }
 
 /**
- * Sección de Bebidas.
+ * Muestra las bebidas.
  */
 window.showBebidasSection = function() {
     const section = document.getElementById('bebidas-section');
@@ -182,13 +192,15 @@ window.showBebidasSection = function() {
 
     if (container && allBebidas) {
         container.innerHTML = allBebidas.map(b => `
-            <div class="bebida-card">
-                <h5>${b.nombre}</h5>
+            <div class="card p-2 mb-2">
+                <h6>${b.nombre} (${b.tamaño})</h6>
                 <p>$${b.precio}</p>
-                <button onclick="addBebidaToCart('${b.id}', '${b.nombre}')">Añadir</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="addBebidaToCart(${b.id}, '${b.nombre}')">+ Añadir</button>
             </div>
         `).join('');
     }
+    // Scroll suave hasta la sección de bebidas
+    section.scrollIntoView({ behavior: 'smooth' });
 };
 
 window.addBebidaToCart = function(id, nombre) {
