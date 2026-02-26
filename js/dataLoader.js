@@ -1,66 +1,64 @@
 // =======================================================
-// dataLoader.js: Carga de Datos desde Google Sheets (JSON)
+// dataLoader.js: Carga de Datos Local (Seguro y Rápido)
 // =======================================================
 
-// !!! MUY IMPORTANTE: La URL DEBE terminar en output=json y apuntar a una URL válida.
-const DATA_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQslem2QSxQVorpfXGxSw90U9UvH6Ng1mFIP0G6inFAgDXFhaTbLc1cVgckOM1surHHWf9iMI0r85tr/pub?output=json'; 
+/**
+ * DATOS LOCALES: 
+ * Al guardarlos aquí, tu página funcionará siempre, incluso sin internet.
+ * Ideal para tu portfolio en GitHub Pages.
+ */
 
-// Array global para almacenar los datos
-let allSabores = [];
-let allBebidas = [];
-let ALL_PRODUCTOS = []; // Variable global para todos los ítems de precio (pizzas base y bebidas)
-let PIZZA_PRECIO_BASE = 0; // Variable global para el precio base (Ej: Pizza Especial Entera)
+const allSabores = [
+    { nombre: "Muzzarella", descripcion: "Salsa de tomate, muzzarella, aceitunas.", imagen: "muzza", tipo: "sabor" },
+    { nombre: "Fugazzetta", descripcion: "Muzzarella y mucha cebolla.", imagen: "fuga", tipo: "sabor" },
+    { nombre: "Napolitana", descripcion: "Muzzarella, rodajas de tomate y ajo.", imagen: "napo", tipo: "sabor" },
+    { nombre: "Calabresa", descripcion: "Muzzarella y longaniza de primera.", imagen: "cala", tipo: "sabor" },
+    { nombre: "Roquefort", descripcion: "Muzzarella y queso azul intenso.", imagen: "roquefort", tipo: "sabor" },
+    { nombre: "Jamón y Morrón", descripcion: "La clásica combinación.", imagen: "jamon", tipo: "sabor" }
+];
+
+const allBebidas = [
+    { id: 101, nombre: "Coca Cola", tamaño: "1.5L", precio: 2500, imagen: "coca.jpg", tipo: "bebida" },
+    { id: 102, nombre: "Cerveza Quilmes", tamaño: "1L", precio: 3000, imagen: "quilmes.jpg", tipo: "bebida" },
+    { id: 103, nombre: "Agua Mineral", tamaño: "500ml", precio: 1200, imagen: "agua.jpg", tipo: "bebida" }
+];
+
+const ALL_PRODUCTOS = [
+    { nombre: "Pizza Especial", tamaño: "entera", precioBase: 13000, tipo: "pizza_base" },
+    ...allBebidas
+];
+
+const PIZZA_PRECIO_BASE = 13000;
 
 /**
- * Función principal para obtener los datos de la hoja de cálculo.
+ * Función que simula la carga de datos.
+ * Mantenemos la estructura para no romper el resto de tu app.
  */
 async function loadPizzaData() {
+    console.log("Iniciando carga de datos locales...");
+    
     try {
-        const response = await fetch(DATA_SHEET_URL);
-        
-        // 🛑 CORRECCIÓN 1: Manejar el error de recibir HTML
-        // Si la URL es incorrecta, Google devuelve HTML. Verificamos el estado.
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        
-        // Usamos .text() primero para depuración si falla, pero mantenemos .json()
-        const data = await response.json(); 
-        
-        // 🛑 CORRECCIÓN 2: Ajustar Filtros por 'sabor' y separar 'bebida'
-        // Tu hoja tiene 'tipo: sabor', no 'tipo: pizza'.
-        allSabores = data
-            .filter(item => item.tipo === 'sabor')
-            .sort((a, b) => a.nombre.localeCompare(b.nombre));
+        // Simulamos una pequeña espera para que se vea el "Cargando..." un milisegundo
+        setTimeout(() => {
+            console.log('Datos de sabores cargados:', allSabores.length);
             
-        // 🛑 CORRECCIÓN 3: Separar TODOS los productos con precio (bases y bebidas)
-        // Usamos !== 'sabor' para incluir bebidas y bases de pizza.
-        ALL_PRODUCTOS = data.filter(item => item.tipo !== 'sabor');
-        
-        // 🛑 CORRECCIÓN 4: Extraer Bebidas y Precio Base
-        allBebidas = ALL_PRODUCTOS.filter(item => item.tipo === 'bebida');
-        
-        const pizzaBaseItem = ALL_PRODUCTOS.find(item => item.nombre.includes('Especial') && item.tipo === 'pizza_base');
-        PIZZA_PRECIO_BASE = pizzaBaseItem ? pizzaBaseItem.precioBase : 13000; // Valor por defecto para evitar errores
-        
-        console.log('Datos de sabores cargados:', allSabores.length);
-        console.log('Datos de bebidas cargados:', allBebidas.length);
-        console.log('Precio base de pizza especial:', PIZZA_PRECIO_BASE);
-
-        // Llamamos a la función que inicia el configurador una vez que los datos están listos
-        initializeConfigurator(allSabores); // Pasamos allSabores si initializeConfigurator lo necesita
+            // Verificamos si la función existe en el window antes de llamarla
+            if (typeof window.initializeConfigurator === 'function') {
+                window.initializeConfigurator();
+            } else {
+                console.warn("initializeConfigurator aún no está disponible.");
+            }
+        }, 100);
 
     } catch (error) {
-        console.error('Error al cargar datos desde Google Sheets:', error);
-        // Mostrar un mensaje de error al usuario
-        document.getElementById('pedido-list-container').innerHTML = 
-            '<p class="text-danger">No se pudieron cargar los sabores. Por favor, intenta más tarde.</p>';
+        console.error('Error al procesar datos:', error);
+        const container = document.getElementById('pedido-list-container');
+        if (container) container.innerHTML = '<p class="text-danger">Error al cargar el menú.</p>';
     }
 }
 
-// Iniciar la carga de datos tan pronto como la página se cargue
+// Iniciar la carga
 document.addEventListener('DOMContentLoaded', loadPizzaData);
 
-// 🛑 CORRECCIÓN 5: Exportar todas las variables necesarias
-// Exportar las variables para usarlas en otros archivos JS
+// Exportar para pizzaConfig.js
 export { allSabores, allBebidas, ALL_PRODUCTOS, PIZZA_PRECIO_BASE };
