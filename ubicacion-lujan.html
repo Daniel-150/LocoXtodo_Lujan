@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubicación - Luján | Loco X Todo</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <header id="main-header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="index.html">
+                <img src="assets/images/logo_locoxtodo.png" alt="Loco X Todo" height="40">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html#hero-section">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#pedido-section">Pedir para Llevar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#reservas-grupos">Reservas (Grupos)</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#bebidas-menu-local">Menú Local</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="ubicacion-lujan.html">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+        </header>
+
+    <main>
+        <section class="py-5" style="margin-top: 76px;">
+            <div class="container">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">📍 Encontranos en Luján</h2>
+                    <p class="text-muted">Retiro en el local y consumo en el salón</p>
+                </div>
+
+                <div class="row justify-content-center g-4">
+                    <div class="col-md-6">
+                        <div class="p-4 rounded shadow-sm h-100" style="background-color: var(--color-text-light);">
+                            <h5 class="fw-bold mb-3">Datos de contacto</h5>
+                            <p class="mb-2">📍 <strong>Dirección:</strong><br>San Martín y Francia, Luján, Provincia de Buenos Aires</p>
+                            <!-- ⚠️ EDITAR: horario real de atención -->
+                            <p class="mb-2">🕒 <strong>Horario:</strong><br>11:30 a 16:00 hs y 19:00 a 00:00 hs <br> Lunes a la mañana cerrado</p>
+                            <!-- ⚠️ EDITAR: mismo número que NUMERO_WHATSAPP_PIZZERIA en js/pizzaConfig.js -->
+                            <p class="mb-3">📱 <strong>WhatsApp:</strong><br>+54 9 11 2345-6789</p>
+
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=-34.5643913,-59.11904899999999"
+                               target="_blank" rel="noopener" class="btn-primary-cta w-100 text-center d-block">
+                                Cómo llegar 🚗
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <iframe
+                            class="w-100 h-100 rounded shadow-sm"
+                            style="min-height: 320px; border: 0;"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3285.5719704690496!2d-59.11904899999999!3d-34.5643913!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bc7decf79ba78f%3A0x8e12d9f11c739b42!2sLoco%20x%20Todo.%20Pizza%20Libre!5e0!3m2!1ses-419!2sar!4v1783583727665!5m2!1ses-419!2sar"
+                            allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer">
+        </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

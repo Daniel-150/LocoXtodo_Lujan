@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Salón | Loco X Todo</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/salon.css">
+</head>
+<body class="bg-light">
+    
+    <!-- NAVBAR PRINCIPAL -->
+    <header id="main-header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html">
+                    <img src="assets/images/logo_locoxtodo.png" alt="Loco X Todo" height="40">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#pedido-section">Pedir para Llevar</a></li>
+                        <li class="nav-item"><a class="nav-link" href="reservas.html">Reservas (Grupos)</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="salon.html">Menú Local</a></li>
+                        <li class="nav-item"><a class="nav-link" href="ubicacion-lujan.html">Ubicación</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO CORTO -->
+    <section class="menu-hero text-center text-white d-flex align-items-center justify-content-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold text-uppercase tracking-wide">Menú Salón</h1>
+            <p class="lead mb-0">Disfrutá de la pizza libre en nuestro local</p>
+        </div>
+    </section>
+
+    <!-- NAV INTERNO FIJO Y BUSCADOR -->
+    <div class="sticky-top bg-white shadow-sm sub-nav-container">
+        <div class="container py-2">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                <nav class="nav nav-pills sub-nav-scroll">
+                    <a class="nav-link active" href="#sabores-section">🍕 Sabores</a>
+                    <a class="nav-link" href="#bebidas-section">🥤 Bebidas</a>
+                    <a class="nav-link" href="#vinos-section">🍷 Vinos</a>
+                    <a class="nav-link" href="#postres-section">🍰 Postres</a>
+                </nav>
+                <div class="search-box">
+                    <input type="text" id="menu-search" class="form-control" placeholder="🔍 ¿Qué estás buscando?...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO CON CARRUSELES -->
+    <main class="container my-5">
+
+        <!-- SECCIÓN SABORES: CARRUSEL HORIZONTAL -->
+        <section id="sabores-section" class="mb-5 pt-4">
+            <h2 class="fw-bold mb-3 text-dark">🍕 Nuestros 37 Sabores</h2>
+            
+            <div class="horizontal-scroll-wrapper" id="sabores-carousel-container">
+                <!-- Card de Pizza Ejemplo 1 -->
+                <div class="item-card bg-white shadow-sm">
+                    <div class="item-img-container">
+                        <img src="assets/images/pizza-muzza.jpg" alt="Muzzarella">
+                    </div>
+                    <div class="item-details">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold mb-0 text-uppercase text-truncate">Muzzarella</h6>
+                            <span class="badge bg-danger ms-1">Clásica</span>
+                        </div>
+                        <p class="text-muted mb-0 item-desc">Salsa de tomate, muzzarella, aceitunas y orégano.</p>
+                    </div>
+                </div>
+
+                <!-- Card de Pizza Ejemplo 2 -->
+                <div class="item-card bg-white shadow-sm">
+                    <div class="item-img-container">
+                        <img src="assets/images/pizza-fugazzeta.jpg" alt="Fugazzeta">
+                    </div>
+                    <div class="item-details">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold mb-0 text-uppercase text-truncate">Fugazzeta</h6>
+                            <span class="badge bg-warning text-dark ms-1">Especial</span>
+                        </div>
+                        <p class="text-muted mb-0 item-desc">Abundante cebolla, muzzarella, aceite de oliva y pimienta.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN BEBIDAS: CARRUSEL HORIZONTAL -->
+        <section id="gaseosas-section" class="mb-5 pt-4">
+            <h2 class="fw-bold mb-3 text-dark">🥤 Gaseosas</h2>
+            <div class="horizontal-scroll-wrapper" id="gaseosas-carousel-container"></div>
+        </section>
+
+        <section id="aguas-section" class="mb-5 pt-4">
+            <h2 class="fw-bold mb-3 text-dark">💧 Aguas y Saborizadas</h2>
+            <div class="horizontal-scroll-wrapper" id="aguas-carousel-container"></div>
+        </section>
+
+        <section id="cervezas-section" class="mb-5 pt-4">
+            <h2 class="fw-bold mb-3 text-dark">🍺 Cervezas</h2>
+            <div class="horizontal-scroll-wrapper" id="cervezas-carousel-container"></div>
+        </section>
+
+        <!-- SECCIÓN VINOS: CARRUSEL HORIZONTAL -->
+        <section id="vinos-section" class="mb-5 pt-4">
+            <h2 class="fw-bold mb-3 text-dark">🍷 Nuestra Bodega</h2>
+            
+            <div class="horizontal-scroll-wrapper" id="vinos-carousel-container">
+                <!-- Ejemplo Vino -->
+                <div class="item-card bg-white shadow-sm text-center border-start border-danger border-3">
+                    <div class="item-img-container">
+                        <img src="assets/images/vino-malbec.jpg" alt="Vino Malbec">
+                    </div>
+                    <div class="item-details d-flex flex-column align-items-center w-100">
+                        <h6 class="fw-bold mb-1 text-truncate w-100">Malbec Estancia Mendoza</h6>
+                        <span class="price-tag">$5.200</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN POSTRES: CARRUSEL HORIZONTAL -->
+        <section id="postres-section" class="mb-5 pt-4">
+            <h2 class="fw-bold mb-3 text-dark">🍰 Algo Dulce</h2>
+            
+            <div class="horizontal-scroll-wrapper" id="postres-carousel-container">
+                <!-- Ejemplo Postre -->
+                <div class="item-card bg-white shadow-sm text-center">
+                    <div class="item-img-container">
+                        <img src="assets/images/postre-flan.jpg" alt="Flan Casero">
+                    </div>
+                    <div class="item-details d-flex flex-column align-items-center w-100">
+                        <h6 class="fw-bold mb-1 text-truncate w-100">Flan Casero con Mixto</h6>
+                        <span class="price-tag">$1.800</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p class="m-0 small">© 2026 Loco X Todo - Menú Salón</p>
+    </footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="js/salon-menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+/* ==========================================================================
+   ESTILOS GENERALES Y HERO
+   ========================================================================== */
+.menu-hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../assets/images/hero-pizza.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 140px; /* Más corto en móviles para no robar pantalla */
+    margin-top: 56px;
+}
+
+/* ==========================================================================
+   NAVBAR INTERNO STICKY (Optimizado para Celulares)
+   ========================================================================== */
+.sub-nav-container {
+    top: 54px; /* Pegado abajo del header principal */
+    z-index: 1010;
+    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
+}
+
+/* Contenedor del scroll de los botones */
+.sub-nav-scroll {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 6px;
+    width: 100%;
+}
+
+/* Ocultar la barra de scroll para estética limpia */
+.sub-nav-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.sub-nav-scroll .nav-link {
+    white-space: nowrap;
+    color: #4b5563;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 20px; /* Botones más redondeados tipo app */
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+}
+
+.sub-nav-scroll .nav-link.active {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+    color: #ffffff;
+}
+
+/* Buscador ajustado */
+.search-box {
+    width: 100%;
+}
+.search-box .form-control {
+    border-radius: 20px;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+}
+
+/* ==========================================================================
+   CARRUSELES HORIZONTALES (Estilo App Mobile)
+   ========================================================================== */
+.horizontal-scroll-wrapper {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 8px 4px 16px 4px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Barra de scroll sutil en móvil */
+.horizontal-scroll-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+.horizontal-scroll-wrapper::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* TARJETA INDIVIDUAL */
+.item-card {
+    flex: 0 0 170px; /* Tamaño ideal de tarjeta en celular (entran casi dos en pantalla) */
+    scroll-snap-align: start;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+}
+
+/* CONTENEDOR DE LA IMAGEN */
+.item-img-container {
+    width: 100%;
+    height: 110px; /* Proporcional para pantallas chicas */
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.item-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* DETALLES DE LA TARJETA */
+.item-details {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.item-details h6 {
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+
+/* Limitar descripción a dos líneas exactas */
+.item-desc {
+    font-size: 0.75rem;
+    color: #6b7280;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
+    margin-top: 4px;
+}
+
+/* Precios */
+.price-tag {
+    font-weight: 700;
+    color: #16a34a;
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+
+/* Títulos de secciones */
+h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 8px !important;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (Mejoras para pantallas más grandes como tablets o compus)
+   ========================================================================== */
+@media (min-width: 768px) {
+    .menu-hero {
+        height: 180px;
+    }
+    
+    .search-box {
+        max-width: 320px;
+    }
+
+    .item-card {
+        flex: 0 0 220px; /* Tarjetas más grandes en monitores */
+    }
+
+    .item-img-container {
+        height: 140px;
+    }
+
+    .item-details h6 {
+        font-size: 1rem;
+    }
+
+    .item-desc {
+        font-size: 0.8rem;
+    }
+
+    .price-tag {
+        font-size: 1.1rem;
+    }
+
+    h2 {
+        font-size: 1.75rem !important;
+    }
+}
+
+/* Modificá esta clase para que las tarjetas sean más grandes en celular */
+.item-card {
+    flex: 0 0 200px; /* Subimos de 170px a 200px para que entren nombres largos */
+    scroll-snap-align: start;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+}
+
+/* Agregá esto para que al deslizar el sub-nav, la palabra 'Postres' no se pegue al borde */
+.sub-nav-scroll {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    padding-right: 20px; /* Margen de respiro al final del scroll */
+    gap: 6px;
+    width: 100%;
+}
+
+/* Mantenemos el tamaño grande en pantallas de tablets/compus */
+@media (min-width: 768px) {
+    .item-card {
+        flex: 0 0 240px; 
+    }
+}

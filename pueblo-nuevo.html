@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loco X Todo Delivery | Pueblo Nuevo</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    
+    <header id="main-header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            
+            <a class="navbar-brand" href="#hero-section">
+                <img src="assets/images/logo_locoxtodo.png" alt="Loco X Todo" height="40">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="#hero-section">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pedido-section">Pedir para Llevar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="ubicacion-pueblo-nuevo.html">Ubicación</a></li>
+                </ul>
+                
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link btn-secondary-cart" href="#">
+                            🛒 <span id="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+        </header>
+
+    <main>
+        
+        <section id="hero-section"class="d-flex align-items-center text-center" >
+            <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+                
+                <h1 class="display-2 text-uppercase mb-3">
+                    <span class="text-white">Locura Total:</span>
+                    <br>
+                    <span class="hero-highlight">31 Sabores de Pizza Libre</span>
+                </h1>
+                
+                <p class="lead text-white mb-5 d-none d-md-block">
+                    Arma tu pedido, elige tus porciones favoritas y disfruta de la mejor experiencia de pizza a domicilio.
+                </p>
+                
+                <a href="#pedido-section" class="btn-primary-cta btn-lg shadow-lg">
+                    ¡Arma tu Pizza Ahora!
+                </a>
+            </div>
+        </div>
+    </div>
+            </section>
+
+       <!-- =======================================================
+     SECCIÓN: CONFIGURADOR DE PIZZAS (index.html)
+     ======================================================= -->
+<section id="pedido-section" class="container my-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">🍕 Arma tu Pizza para Llevar</h2>
+        <p class="text-muted">(De 1 a 4 Sabores)</p>
+    </div>
+
+    <div class="row gx-2"> <!-- gx-2 reduce el espacio entre columnas para exprimir la pantalla en celular -->
+        
+        <!-- COLUMNA IZQUIERDA: Buscador y Grilla de Sabores (Ocupa el 58% del ancho) -->
+        <div class="col-7 col-md-7">
+            <div class="input-group mb-3">
+                <input type="text" id="sabor-search" class="form-control form-control-sm" placeholder="🔍 Buscar sabor...">
+            </div>
+            
+            <!-- Este contenedor manejará el scroll interno dinámico con JS -->
+            <div id="sabores-list-container" class="sabores-grid">
+                <p class="text-center text-muted">Cargando sabores disponibles...</p>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: Resumen de la pizza actual y Carrito Activo (Ocupa el 42% del ancho) -->
+        <div class="col-5 col-md-5">
+            <div id="resumen-columna" class="p-2 p-md-4 rounded shadow-sm" style="background-color: var(--color-text-light);">
+                
+                <!-- Pizza que se está armando en el momento -->
+                <h4 class="mb-2 summary-title">Pizza en preparación <small id="summary-status" class="text-muted d-block d-md-inline">(0 de 4)</small></h4>
+                
+                <ul id="pizza-summary-list" class="list-group mb-3">
+                    <!-- Se llena dinámicamente desde pizzaConfig.js -->
+                </ul>
+                
+                <!-- Botones de control rápido para la preparación actual -->
+                <div class="d-flex gap-2 mb-2">
+                    <button onclick="limpiarPizza()" class="btn btn-xs btn-secondary w-50 py-1" style="font-size: 0.8rem;">
+                        Limpiar
+                    </button>
+                    <button id="btn-save-edit" class="btn btn-xs btn-success w-50 py-1" onclick="guardarEdicion()" style="font-size: 0.8rem; display: none;">
+                        Guardar Cambios
+                    </button>
+                </div>
+
+                <!-- Historial del Pedido: Pizzas ya armadas en segundo plano (Oculto inicialmente) -->
+                <div id="pizzas-armadas-container" class="mt-3" style="display: none;">
+                    <h6 class="border-top pt-2 text-muted fw-bold" style="font-size: 0.85rem;">Pizzas en tu pedido:</h6>
+                    <div id="pizzas-armadas-lista">
+                        <!-- Se llena dinámicamente al hacer clic en '+ Armar otra pizza' -->
+                    </div>
+                </div>
+                
+                <hr class="my-2">
+
+                <!-- BOTONES DE FLUJO PRINCIPAL -->
+                <button id="btn-add-another" class="btn-primary-cta w-100 mb-2 py-2" onclick="agregarOtraPizza()" style="font-size: 0.85rem; padding: 5px; font-weight: 700;">
+                    Guardar
+                </button>
+
+                <!-- Presupuesto acumulado de las pizzas ya guardadas -->
+                <div id="presupuesto-pizzas" class="presupuesto-box">
+                    <!-- Se llena dinámicamente con el total y el descuento de la promo -->
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</section>
+
+            </section>
+
+    <!-- NUEVO: Removido el display:none para que esté siempre disponible -->
+<section id="bebidas-section" class="container my-5">
+    <div class="text-center mb-4 border-top pt-4">
+        <h3 class="fw-bold">🥤 ¿Deseas agregar alguna bebida?</h3>
+        <p class="text-muted">Toca una categoría para desplegar las opciones</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            <!-- CONTENEDOR DE ACORDEONES DINÁMICOS -->
+            <div class="accordion" id="accordionBebidas">
+                <!-- Se llena dinámicamente con JavaScript automáticamente -->
+            </div>
+
+            <!-- index.html -->
+<!-- SECCIÓN: DATOS DE ENTREGA (Colocar antes del botón final de pago) -->
+<div class="card p-3 my-4 shadow-sm border" style="background-color: #fff9f5; border-radius: 12px;">
+    <h4 class="fw-bold mb-3" style="font-size: 1.2rem;">👤 Tus Datos</h4>
+    
+    <div class="row g-3">
+        <!-- Campo Nombre (Obligatorio) -->
+        <div class="col-12">
+            <label for="user-name" class="form-label fw-bold mb-1" style="font-size: 0.9rem;">¿A nombre de quién queda el pedido?</label>
+            <input type="text" id="user-name" class="form-control" placeholder="Ej: Juan Pérez" required>
+        </div>
+
+        <!-- Retiro en el local vs Delivery a domicilio -->
+        <div class="col-12">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.9rem;">¿Cómo querés tu pedido?</label>
+
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="tipoEntrega" id="entrega-domicilio" value="domicilio" checked onclick="toggleTipoEntrega(true)">
+                <label class="form-check-label text-dark" for="entrega-domicilio">
+                    🛵 Delivery a domicilio
+                </label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipoEntrega" id="entrega-local" value="local" onclick="toggleTipoEntrega(false)">
+                <label class="form-check-label text-dark" for="entrega-local">
+                    🏠 Retiro en el local
+                </label>
+            </div>
+        </div>
+
+        <!-- Bloque de dirección (solo visible si eligió Delivery) -->
+        <div id="direccion-container" class="col-12">
+            <label for="user-address" class="form-label fw-bold mb-1" style="font-size: 0.9rem;">¿A qué dirección lo llevamos?</label>
+            <input type="text" id="user-address" class="form-control mb-2" placeholder="Ej: Av. San Martín 1234, entre calle A y B" required>
+
+            <button type="button" id="btn-usar-ubicacion" class="btn btn-sm btn-outline-secondary" onclick="solicitarUbicacionActual()">
+                📍 Usar mi ubicación actual
+            </button>
+            <div id="estado-ubicacion" class="mt-2" style="font-size: 0.85rem;"></div>
+        </div>
+
+        <!-- Dirección del local (solo visible si eligió Retiro en el local) -->
+        <div id="retiro-local-container" class="col-12" style="display: none;">
+            <div class="alert alert-light border mb-0 py-2" style="font-size: 0.9rem;">
+                📍 Nos encontrás en: <strong id="lbl-direccion-local">Ej: Av. Siempre Viva 742</strong>
+            </div>
+        </div>
+
+        <!-- Control de Horario -->
+        <div class="col-12 mt-2">
+            <label class="form-label fw-bold mb-1" style="font-size: 0.9rem;">¿Cuándo lo querés?</label>
+            
+            <!-- Opción por defecto (Inmediato) -->
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="horarioRetiro" id="retiro-inmediato" value="inmediato" checked onclick="toggleSelectorHora(false)">
+                <label class="form-check-label text-dark" for="retiro-inmediato">
+                    Lo antes posible <span class="text-muted" style="font-size: 0.85rem;">(30-45 min aprox.)</span>
+                </label>
+            </div>
+
+            <!-- Opción Programar -->
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="horarioRetiro" id="retiro-programado" value="programado" onclick="toggleSelectorHora(true)">
+                <label class="form-check-label text-dark" for="retiro-programado">
+                    Programar horario 🕒
+                </label>
+            </div>
+        </div>
+
+        <!-- Selector de Hora Oculto (Solo aparece si eligen programar) -->
+        <div id="selector-hora-container" class="col-12 mt-2" style="display: none;">
+            <label for="user-time" class="form-label text-muted mb-1" style="font-size: 0.85rem;">Elegí el horario estimado:</label>
+            <input type="time" id="user-time" class="form-control form-control-sm" style="max-width: 150px;">
+        </div>
+    </div>
+</div>
+
+            <!-- BOTÓN FINAL DE CIERRE SIEMPRE ACCESIBLE -->
+            <div class="text-center mt-4">
+                <button class="btn btn-success btn-lg px-5 fw-bold" onclick="irAlCheckout()" style="border-radius: 30px; box-shadow: 0 4px 15px rgba(25,135,84,0.3);">
+                    TERMINAR PEDIDO e IR A PAGAR ➔
+                </button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- MODAL DE RESUMEN FINAL DE COMPRA (BOOTSTRAP) -->
+<div class="modal fade" id="resumenPedidoModal" tabindex="-1" aria-labelledby="resumenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 15px; border: none; overflow: hidden;">
+            
+            <!-- Encabezado -->
+            <div class="modal-header text-white" style="background-color: var(--color-primary, #e74c3c);">
+                <h5 class="modal-title fw-bold" id="resumenModalLabel">📋 Resumen de tu Pedido</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <!-- Cuerpo del Resumen -->
+            <div class="modal-body bg-light p-4">
+                <!-- Datos del Cliente -->
+                <div class="mb-3 border-bottom pb-2">
+                    <p class="mb-1"><strong>Cliente:</strong> <span id="lbl-resumen-cliente"></span></p>
+                    <p class="mb-1"><strong>Entrega:</strong> <span id="lbl-resumen-direccion"></span></p>
+                    <p class="mb-1"><strong>Horario:</strong> <span id="lbl-resumen-horario" class="text-primary fw-bold"></span></p>
+                </div>
+                
+                <!-- Listado de Productos -->
+                <h6 class="fw-bold mb-2 text-muted">Productos:</h6>
+                <div id="resumen-productos-lista" class="mb-3" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Se llena con JS -->
+                </div>
+                
+                <!-- Total -->
+                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                    <h5 class="fw-bold mb-0">Total a Pagar:</h5>
+                    <h4 class="fw-bold text-success mb-0" id="lbl-resumen-total">$0</h4>
+                </div>
+            </div>
+            
+            <!-- Botones de Acción -->
+            <div class="modal-footer bg-white border-top-0 d-flex gap-2">
+                <button type="button" class="btn btn-secondary flex-grow-1 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">
+                    Modificar pedido
+                </button>
+                <button type="button" class="btn btn-success flex-grow-1 py-2 fw-bold" onclick="enviarPedidoDefinitivo()" style="border-radius: 10px;">
+                    Confirmar y Enviar ✔
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    </main>
+
+    <footer id="main-footer">
+        </footer>
+
+    <!-- Contenedor de mensajitos flotantes (toasts) de éxito/error -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script type="module" src="js/dataLoader.js"></script>
+    <script type="module" src="js/pizzaConfigDelivery.js"></script>
+    
+
+</body>
+</html>

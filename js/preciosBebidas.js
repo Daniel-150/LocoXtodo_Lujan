@@ -10,15 +10,15 @@
 // precioLocal  = consumo en el salón (para el futuro menú aparte)
 
 const PRECIOS_POR_CATEGORIA = {
-    "Gaseosa":                   { precioLlevar: 3500, precioLocal: 7000 },
+    "Gaseosa":                   { precioLlevar: 4000, precioLocal: 7000 },
     "Agua Saborizada":           { precioLlevar: 3500, precioLocal: 7000 },
     "Gaseosa Chica":             { precioLlevar: 2000, precioLocal: 3500 },
     "Agua":                      { precioLlevar: 2500, precioLocal: 5000 },
     "Agua Chica":                { precioLlevar: 1500, precioLocal: 3000 },
     "Cerveza Barata":            { precioLlevar: 3500, precioLocal: 7000 },
     "Cerveza Cara":              { precioLlevar: 4500, precioLocal: 9000 },
-    "Cerveza Lata Barata":       { precioLlevar: 2500, precioLocal: 4000 },
-    "Cerveza Lata/Porrón Cara":  { precioLlevar: 3000, precioLocal: 5000 },
+    "Cerveza Lata Barata":       { precioLlevar: 2000, precioLocal: 4000 },
+    "Cerveza Lata/Porrón Cara":  { precioLlevar: 2500, precioLocal: 5000 },
     "Postres":                   { precioLlevar: 3500, precioLocal: 5000 },
 };
 

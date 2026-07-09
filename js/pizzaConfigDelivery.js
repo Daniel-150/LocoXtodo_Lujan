@@ -11,16 +11,22 @@ let currentCart = [];
 let pizzaEditandoId = null; // Guarda el ID de la pizza que se está editando
 let listaPizzasExpandida = false; // Si el acordeón de "Pizzas en tu pedido" está desplegado
 let totalPedidoActual = 0; // Total calculado en irAlCheckout, lo usa enviarPedidoDefinitivo
+let ubicacionGPS = null; // {lat, lng} si el cliente compartió su ubicación en tiempo real
 
-// ⚠️ EDITAR: Reemplazar por el número real de WhatsApp de la sucursal LUJÁN.
+// ⚠️ EDITAR: Reemplazar por la dirección real de la sucursal PUEBLO NUEVO (para "Retiro en el local").
+const DIRECCION_LOCAL = "Av. Siempre Viva 742";
+
+// ⚠️ EDITAR: Reemplazar por el número real de WhatsApp de la sucursal PUEBLO NUEVO.
+// Formato: código de país + número, todo junto, sin "+", espacios ni guiones.
+// Ejemplo Argentina: 54 9 11 2345-6789 → "5491123456789"
 const NUMERO_WHATSAPP_PIZZERIA = "5491123456789";
-
-// --- SELECTORES DEL DOM ---
-const notasInput = document.getElementById('pedido-notas');
 
 /**
  * Calcula subtotal, descuento de la promo multipizza y total de las
  * pizzas que ya están en el carrito, separando muzza pura de especiales
+ * porque cada tipo tiene su propio precio base y su propia escalera de
+ * descuento. Se usa tanto para el cuadrito debajo de "Pizzas en tu
+ * pedido" como para el total del checkout.
  */
 function calcularResumenPizzas() {
     const pizzas = currentCart.filter(item => item.tipo === 'pizza');
@@ -41,7 +47,9 @@ function calcularResumenPizzas() {
 }
 
 /**
- * Muestra un mensajito flotante (toast) que se desvanece solo
+ * Muestra un mensajito flotante (toast) que se desvanece solo, en vez
+ * de un alert() nativo que bloquea la pantalla hasta que el cliente
+ * apreta OK. tipo: 'exito' (verde) o 'error' (rojo).
  */
 function mostrarMensaje(texto, tipo = 'exito') {
     const contenedor = document.getElementById('toast-container');
@@ -52,16 +60,19 @@ function mostrarMensaje(texto, tipo = 'exito') {
     toast.textContent = texto;
     contenedor.appendChild(toast);
 
+    // Forzamos un frame antes de agregar la clase, para que la transición de entrada se vea
     requestAnimationFrame(() => toast.classList.add('toast-mostrar'));
 
     setTimeout(() => {
         toast.classList.remove('toast-mostrar');
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(() => toast.remove(), 300); // Esperamos a que termine el fade-out antes de sacarlo del DOM
     }, 2200);
 }
 
 /**
- * Una pizza es "muzza pura" solo si tiene un único sabor, Muzzarella, ocupando los 4 cuartos completos.
+ * Una pizza es "muzza pura" solo si tiene un único sabor, Muzzarella,
+ * ocupando los 4 cuartos completos. Cualquier otra combinación —incluso
+ * 3/4 muzza + 1/4 de otro sabor— es "especial".
  */
 function esMuzzaPura(sabores) {
     return sabores.length === 1 && sabores[0].sabor === 'Muzzarella' && sabores[0].cuartos === 4;
@@ -84,7 +95,9 @@ function nombrePizza(sabores) {
 }
 
 /**
- * Calcula subtotal, descuento y total de un grupo de pizzas del mismo precio base.
+ * Calcula subtotal, descuento y total de un grupo de pizzas del mismo
+ * precio base. El descuento de la promo (-$1000 acumulado) se calcula
+ * de forma independiente para cada grupo (muzza pura vs especial).
  */
 function calcularResumenGrupo(cantidad, precioBase) {
     const subtotal = precioBase * cantidad;
@@ -92,7 +105,6 @@ function calcularResumenGrupo(cantidad, precioBase) {
     const total = subtotal - descuento;
     return { cantidad, subtotal, descuento, total };
 }
-
 function fraccionTexto(cuartos) {
     switch (cuartos) {
         case 1: return "1/4";
@@ -105,20 +117,23 @@ function fraccionTexto(cuartos) {
 
 /**
  * Suma los cuartos ya asignados entre todos los sabores elegidos.
+ * Una pizza completa siempre debe sumar 4.
  */
 function totalCuartosAsignados() {
     return pizzaActual.reduce((acc, item) => acc + item.cuartos, 0);
 }
 
 /**
- * Da vuelta un array de sabores en un texto legible
+ * Da vuelta un array de sabores (con sus cuartos) en un texto legible,
+ * ej: "1/2 Jamón, 1/4 Huevo Rallado, 1/4 Berenjena".
  */
 function formatearSabores(sabores) {
     return sabores.map(item => `${fraccionTexto(item.cuartos)} ${item.sabor}`).join(', ');
 }
 
 /**
- * Habilita o bloquea los botones de guardar según los cuartos asignados.
+ * Habilita o bloquea los botones de guardar según si la pizza actual
+ * ya tiene sus 4 cuartos asignados.
  */
 function actualizarEstadoBotonGuardar() {
     const listo = totalCuartosAsignados() === 4;
@@ -133,6 +148,7 @@ function actualizarEstadoBotonGuardar() {
 
 /**
  * Ajusta dinámicamente la altura máxima de la lista de sabores
+ * para que coincida con la columna del resumen (tanto en PC como en celular).
  */
 function ajustarAlturaSabores() {
     const saboresContainer = document.getElementById('sabores-list-container');
@@ -169,7 +185,9 @@ function initializeConfigurator() {
 }
 
 /**
- * Genera el HTML de la tarjeta de un sabor
+ * Genera el HTML de la tarjeta de un sabor (Versión accesible y compacta).
+ * Si el sabor está elegido, en vez del ícono +/✔ muestra un stepper
+ * para asignarle cuartos (1/4, 1/2, 3/4 o Entera).
  */
 function createSaborCard(sabor) {
     const elegido = pizzaActual.find(item => item.sabor === sabor.nombre);
@@ -177,10 +195,7 @@ function createSaborCard(sabor) {
     if (!elegido) {
         return `
             <div class="sabor-card-mini" onclick="toggleSabor('${sabor.nombre}')">
-                <div class="sabor-info-mini">
-                    <img src="assets/images/muzzarela.jpg" alt="" class="sabor-thumb">
-                    <span class="sabor-name">${sabor.nombre}</span>
-                </div>
+                <span class="sabor-name">${sabor.nombre}</span>
                 <span class="sabor-status-icon">+</span>
             </div>
         `;
@@ -188,10 +203,7 @@ function createSaborCard(sabor) {
 
     return `
         <div class="sabor-card-mini selected">
-            <div class="sabor-info-mini">
-                <img src="assets/images/muzzarela.jpg" alt="" class="sabor-thumb">
-                <span class="sabor-name">${sabor.nombre}</span>
-            </div>
+            <span class="sabor-name">${sabor.nombre}</span>
             <div class="cuartos-stepper">
                 <button type="button" class="btn-cuarto" onclick="decrementarCuartos('${sabor.nombre}')">−</button>
                 <span class="cuartos-label">${fraccionTexto(elegido.cuartos)}</span>
@@ -202,7 +214,9 @@ function createSaborCard(sabor) {
 }
 
 /**
- * Vuelve a dibujar toda la grilla de sabores
+ * Vuelve a dibujar toda la grilla de sabores (más simple y robusto que
+ * parchear tarjeta por tarjeta, ahora que cada una puede tener un stepper).
+ * Si había texto en el buscador, se lo vuelve a aplicar.
  */
 function refrescarGrillaSabores() {
     const saboresContainer = document.getElementById('sabores-list-container');
@@ -226,7 +240,8 @@ window.limpiarPizza = function() {
 };
 
 /**
- * Agrega un sabor nuevo o lo saca por completo
+ * Agrega un sabor nuevo (con 1/4 por defecto) o lo saca por completo
+ * si ya estaba elegido (liberando los cuartos que tenía asignados).
  */
 window.toggleSabor = function(nombreSabor) {
     const index = pizzaActual.findIndex(item => item.sabor === nombreSabor);
@@ -246,7 +261,7 @@ window.toggleSabor = function(nombreSabor) {
 };
 
 /**
- * Sube en 1/4 la porción de un sabor ya elegido
+ * Sube en 1/4 la porción de un sabor ya elegido, si queda espacio.
  */
 window.incrementarCuartos = function(nombreSabor) {
     const item = pizzaActual.find(s => s.sabor === nombreSabor);
@@ -263,7 +278,8 @@ window.incrementarCuartos = function(nombreSabor) {
 };
 
 /**
- * Baja en 1/4 la porción de un sabor.
+ * Baja en 1/4 la porción de un sabor. Si ya estaba en 1/4, bajar lo saca
+ * de la pizza por completo (mismo efecto que tocar el ❌).
  */
 window.decrementarCuartos = function(nombreSabor) {
     const item = pizzaActual.find(s => s.sabor === nombreSabor);
@@ -280,7 +296,7 @@ window.decrementarCuartos = function(nombreSabor) {
 };
 
 /**
- * Actualiza el resumen lateral de la pizza
+ * Actualiza el resumen lateral de la pizza con textos legibles para todo público.
  */
 function updatePizzaSummary() {
     const summaryContainer = document.getElementById('pizza-summary-list');
@@ -316,6 +332,8 @@ function updatePizzaSummary() {
 
 /**
  * Lógica interna para empaquetar la pizza y meterla al array del carrito.
+ * Devuelve true si se guardó (o si no había nada que guardar), false si
+ * la pizza actual está incompleta y por lo tanto no se pudo guardar.
  */
 function guardarPizzaEnCarrito() {
     if (pizzaActual.length === 0) return true;
@@ -345,7 +363,7 @@ function guardarPizzaEnCarrito() {
 }
 
 /**
- * Agrega la pizza actual al carrito y limpia la pantalla
+ * Agrega la pizza actual al carrito y limpia la pantalla para poder armar otra.
  */
 window.agregarOtraPizza = function() {
     if (pizzaActual.length === 0) {
@@ -359,7 +377,7 @@ window.agregarOtraPizza = function() {
 };
 
 /**
- * Agrega la pizza actual y desplaza al usuario a la sección de bebidas
+ * Agrega la pizza actual y desplaza al usuario a la sección de bebidas con suavidad.
  */
 window.avanzarABebidas = function() {
     if (pizzaActual.length > 0 && !guardarPizzaEnCarrito()) {
@@ -373,7 +391,9 @@ window.avanzarABebidas = function() {
 };
 
 /**
- * Arma el HTML del cuadrito de presupuesto
+ * Arma el HTML del cuadrito de presupuesto: un solo total combinado
+ * (muzza + especiales), con la promo ya aplicada. El desglose por tipo
+ * se reserva para el modal final de checkout.
  */
 function generarHTMLPresupuesto(resumen) {
     if (resumen.cantidad === 0) return '';
@@ -404,7 +424,7 @@ function renderPizzasArmadas() {
     if (pizzasEnCart.length === 0) {
         container.style.display = 'none';
         lista.innerHTML = '';
-        listaPizzasExpandida = false;
+        listaPizzasExpandida = false; // Que la próxima vez arranque colapsada de nuevo
         const presupuestoEl = document.getElementById('presupuesto-pizzas');
         if (presupuestoEl) presupuestoEl.innerHTML = '';
         return;
@@ -412,6 +432,8 @@ function renderPizzasArmadas() {
 
     container.style.display = 'block';
 
+    // A partir de la 2da pizza, se colapsa: solo se ve la primera + un botón de despliegue.
+    // Así la lista nunca empuja el botón "Guardar" ni el cuadrito de presupuesto fuera de vista.
     const debeColapsar = pizzasEnCart.length > 1 && !listaPizzasExpandida;
     const pizzasAMostrar = debeColapsar ? pizzasEnCart.slice(0, 1) : pizzasEnCart;
 
@@ -445,11 +467,17 @@ function renderPizzasArmadas() {
     ajustarAlturaSabores();
 }
 
+/**
+ * Abre o cierra el acordeón de "Pizzas en tu pedido".
+ */
 window.toggleListaPizzas = function() {
     listaPizzasExpandida = !listaPizzasExpandida;
     renderPizzasArmadas();
 };
 
+/**
+ * Saca una pizza ya armada del carrito de fondo y la vuelve a cargar en el configurador activo
+ */
 window.editarPizza = function(id) {
     if (pizzaActual.length > 0 && !confirm("Estás armando una pizza. ¿Querés descartarla para editar la pizza seleccionada?")) {
         return;
@@ -470,6 +498,9 @@ window.editarPizza = function(id) {
     updateCartDisplay();
 };
 
+/**
+ * Guarda los cambios de la pizza que se bajó a editar
+ */
 window.guardarEdicion = function() {
     if (pizzaActual.length === 0) {
         mostrarMensaje("La pizza debe tener al menos un sabor.", 'error');
@@ -503,12 +534,18 @@ window.guardarEdicion = function() {
     mostrarMensaje("Cambios guardados con éxito.", 'exito');
 };
 
+/**
+ * Elimina por completo una pizza del pedido de fondo
+ */
 window.eliminarPizzaDelCart = function(id) {
     currentCart = currentCart.filter(item => item.id !== id);
     renderPizzasArmadas();
     updateCartDisplay();
 };
 
+/**
+ * Lógica del buscador de sabores
+ */
 function filterSabores(event) {
     const searchTerm = event.target.value.toLowerCase();
     const cards = document.querySelectorAll('.sabor-card-mini');
@@ -523,17 +560,28 @@ function filterSabores(event) {
 // SECCIÓN: BEBIDAS (LÓGICA INTERACTIVA DE CANTIDADES)
 // =======================================================
 
+/**
+ * Muestra las bebidas en acordeones. 
+ * El botón cambia dinámicamente a [-] Cantidad [+] si ya se agregó al menos una.
+ */
+/**
+ * Muestra las bebidas en acordeones. 
+ * Modificado: Ahora detecta cuál acordeón estaba abierto antes del renderizado
+ * para mantenerlo desplegado y evitar que se cierre de forma molesta.
+ */
 window.showBebidasSection = function() {
     const container = document.getElementById('accordionBebidas');
     if (!container || !allBebidas) return;
 
+    // --- TRUCO: DETECTAR CUÁL ACORDEÓN ESTABA ABIERTO ANTES DE BORRAR EL HTML ---
     let indexAbierto = null;
     const itemsExistentes = container.querySelectorAll('.accordion-collapse');
     itemsExistentes.forEach((item, idx) => {
         if (item.classList.contains('show')) {
-            indexAbierto = idx;
+            indexAbierto = idx; // Guardamos el número de índice del colapsable que está a la vista
         }
     });
+    // --------------------------------------------------------------------------
 
     const porCategoria = {
         "Gaseosas": [],
@@ -563,9 +611,12 @@ window.showBebidasSection = function() {
         const idCollapse = `collapse-${index}`;
         const idHeading = `heading-${index}`;
 
+        // --- VALIDACIÓN DE ESTADO PERSISTENTE ---
+        // Si este índice coincide con el que estaba abierto, le quitamos 'collapsed' al botón y le sumamos 'show' al panel
         const esElAbierto = index === indexAbierto;
         const btnClaseCollapsed = esElAbierto ? '' : 'collapsed';
         const panelClaseShow = esElAbierto ? 'show' : '';
+        // ----------------------------------------
 
         return `
             <div class="accordion-item mb-2 border rounded shadow-sm" style="overflow: hidden;">
@@ -631,6 +682,9 @@ window.showBebidasSection = function() {
     }).join('');
 };
 
+/**
+ * Agrega una unidad de la bebida agrupando en el carrito.
+ */
 window.addBebidaToCart = function(id) {
     const bebida = allBebidas.find(b => b.id == id);
     if (!bebida) return;
@@ -658,6 +712,9 @@ window.addBebidaToCart = function(id) {
     showBebidasSection(); 
 };
 
+/**
+ * Resta una unidad de la bebida en el carrito.
+ */
 window.restarBebidaFromCart = function(idUnico) {
     const item = currentCart.find(i => i.id === idUnico);
     if (!item) return;
@@ -673,6 +730,9 @@ window.restarBebidaFromCart = function(idUnico) {
     showBebidasSection(); 
 };
 
+/**
+ * Elimina la línea completa de una bebida.
+ */
 window.removeBebidaFromCart = function(itemId) {
     currentCart = currentCart.filter(item => item.id !== itemId);
     updateCartDisplay();
@@ -683,6 +743,9 @@ window.removeBebidaFromCart = function(itemId) {
 // SECCIÓN: RENDERS DE DETALLES GENERALES Y CHECKOUT
 // =======================================================
 
+/**
+ * Renderiza el desglose completo del pedido lateral en la app.
+ */
 window.updateCartDisplay = function() {
     const cartContainer = document.getElementById('cart-items-container'); 
     const cartCountElement = document.getElementById('cart-count');
@@ -731,6 +794,81 @@ window.updateCartDisplay = function() {
     }).join('');
 };
 
+/**
+ * Muestra el bloque de dirección (con GPS) o la dirección del local,
+ * según si el cliente eligió delivery o retiro en el local.
+ */
+window.toggleTipoEntrega = function(esDomicilio) {
+    const direccionContainer = document.getElementById('direccion-container');
+    const retiroLocalContainer = document.getElementById('retiro-local-container');
+    const addressInput = document.getElementById('user-address');
+    const lblDireccionLocal = document.getElementById('lbl-direccion-local');
+
+    if (lblDireccionLocal) lblDireccionLocal.textContent = DIRECCION_LOCAL;
+
+    if (esDomicilio) {
+        if (direccionContainer) direccionContainer.style.display = 'block';
+        if (retiroLocalContainer) retiroLocalContainer.style.display = 'none';
+        if (addressInput) addressInput.required = true;
+    } else {
+        if (direccionContainer) direccionContainer.style.display = 'none';
+        if (retiroLocalContainer) retiroLocalContainer.style.display = 'block';
+        if (addressInput) addressInput.required = false;
+        ubicacionGPS = null; // Si vuelve a delivery más tarde, que pida la ubicación de nuevo
+    }
+};
+
+/**
+ * Pide el GPS del navegador y guarda las coordenadas para mandar un
+ * link de Google Maps exacto por WhatsApp. No requiere backend ni
+ * API key — solo funciona en HTTPS (o localhost mientras se prueba).
+ */
+window.solicitarUbicacionActual = function() {
+    const estadoEl = document.getElementById('estado-ubicacion');
+    const boton = document.getElementById('btn-usar-ubicacion');
+
+    if (!navigator.geolocation) {
+        if (estadoEl) estadoEl.innerHTML = '<span class="text-danger">Tu navegador no soporta ubicación en tiempo real. Escribí la dirección manualmente.</span>';
+        return;
+    }
+
+    if (boton) {
+        boton.disabled = true;
+        boton.textContent = 'Buscando tu ubicación...';
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (posicion) => {
+            ubicacionGPS = {
+                lat: posicion.coords.latitude,
+                lng: posicion.coords.longitude
+            };
+            if (estadoEl) {
+                estadoEl.innerHTML = '<span class="text-success">✔ Ubicación detectada. Se va a mandar un mapa exacto junto con tu dirección.</span>';
+            }
+            if (boton) {
+                boton.disabled = false;
+                boton.textContent = '📍 Ubicación actualizada';
+            }
+            mostrarMensaje('Ubicación detectada correctamente.', 'exito');
+        },
+        (error) => {
+            ubicacionGPS = null;
+            if (estadoEl) {
+                estadoEl.innerHTML = '<span class="text-danger">No pudimos acceder a tu ubicación. Revisá los permisos del navegador o escribí la dirección manualmente.</span>';
+            }
+            if (boton) {
+                boton.disabled = false;
+                boton.textContent = '📍 Usar mi ubicación actual';
+            }
+            mostrarMensaje('No se pudo obtener tu ubicación.', 'error');
+        }
+    );
+};
+
+/**
+ * Muestra u oculta el campo de la hora según la elección del cliente.
+ */
 window.toggleSelectorHora = function(mostrar) {
     const container = document.getElementById('selector-hora-container');
     const inputTime = document.getElementById('user-time');
@@ -750,6 +888,9 @@ window.toggleSelectorHora = function(mostrar) {
     }
 };
 
+/**
+ * Abre el Modal Resumen Final validando la persistencia de datos.
+ */
 window.irAlCheckout = function() {
     if (pizzaActual.length > 0 && !guardarPizzaEnCarrito()) {
         return;
@@ -767,20 +908,39 @@ window.irAlCheckout = function() {
         return;
     }
 
+    const esDomicilio = document.getElementById('entrega-domicilio').checked;
+    let direccionFinal = "";
+
+    if (esDomicilio) {
+        const addressInput = document.getElementById('user-address');
+        if (!addressInput || addressInput.value.trim() === "") {
+            mostrarMensaje("Por favor, ingresá la dirección de entrega.", 'error');
+            addressInput.focus();
+            return;
+        }
+        direccionFinal = `Domicilio: ${addressInput.value.trim()}`;
+        if (ubicacionGPS) {
+            direccionFinal += " (con ubicación GPS 📍)";
+        }
+    } else {
+        direccionFinal = `Retiro en el local: ${DIRECCION_LOCAL}`;
+    }
+
     const esProgramado = document.getElementById('retiro-programado').checked;
-    let horarioFinal = "Lo antes posible (10-15 min)";
+    let horarioFinal = "Lo antes posible (30-45 min aprox.)";
 
     if (esProgramado) {
         const timeInput = document.getElementById('user-time');
         if (timeInput && timeInput.value) {
             horarioFinal = `A las ${timeInput.value} hs`;
         } else {
-            mostrarMensaje("Por favor, selecciona a qué hora pasarás a retirar.", 'error');
+            mostrarMensaje("Por favor, selecciona a qué hora lo querés.", 'error');
             return;
         }
     }
 
     document.getElementById('lbl-resumen-cliente').textContent = nameInput.value.trim();
+    document.getElementById('lbl-resumen-direccion').textContent = direccionFinal;
     document.getElementById('lbl-resumen-horario').textContent = horarioFinal;
 
     const listaContenedor = document.getElementById('resumen-productos-lista');
@@ -836,14 +996,19 @@ window.irAlCheckout = function() {
 };
 
 /**
- * Arma el texto plano del pedido para mandar por WhatsApp.
+ * Arma el texto plano del pedido (sin HTML) para mandar por WhatsApp,
+ * con el mismo detalle que ve el cliente en el modal de confirmación.
  */
-function construirMensajeWhatsApp(cliente, horario) {
+function construirMensajeWhatsApp(cliente, direccion, horario) {
     const lineas = [];
-    lineas.push('🍕 *Nuevo pedido - Loco X Todo*');
+    lineas.push('🍕 *Nuevo pedido - Loco X Todo Delivery*');
     lineas.push('');
     lineas.push(`*Cliente:* ${cliente}`);
-    lineas.push(`*Retiro:* ${horario}`);
+    lineas.push(`*Entrega:* ${direccion}`);
+    if (ubicacionGPS) {
+        lineas.push(`*Ubicación exacta:* https://www.google.com/maps?q=${ubicacionGPS.lat},${ubicacionGPS.lng}`);
+    }
+    lineas.push(`*Horario:* ${horario}`);
     lineas.push('');
     lineas.push('*Pedido:*');
 
@@ -864,13 +1029,6 @@ function construirMensajeWhatsApp(cliente, horario) {
         lineas.push(`Promo Especiales (${resumenPizzas.especial.cantidad} pizzas): -$${resumenPizzas.especial.descuento}`);
     }
 
-    // Leemos el textarea al momento del envío
-    const aclaracionCocina = notasInput ? notasInput.value.trim() : '';
-    if (aclaracionCocina) {
-        lineas.push('');
-        lineas.push(`📝 *Notas para la cocina:* ${aclaracionCocina}`);
-    }
-
     lineas.push('');
     lineas.push(`*Total: $${totalPedidoActual}*`);
 
@@ -878,14 +1036,17 @@ function construirMensajeWhatsApp(cliente, horario) {
 }
 
 /**
- * Acción final del Modal de Confirmación
+ * Acción final del Modal de Confirmación: arma el pedido en texto,
+ * abre WhatsApp con todo pre-cargado y limpia el carrito (el pedido
+ * ya "salió" hacia la pizzería).
  */
 window.enviarPedidoDefinitivo = function() {
     const cliente = document.getElementById('lbl-resumen-cliente').textContent;
+    const direccion = document.getElementById('lbl-resumen-direccion').textContent;
     const horario = document.getElementById('lbl-resumen-horario').textContent;
 
-    const mensaje = construirMensajeWhatsApp(cliente, horario);
-    const url = `https://wa.me/${5492323527915}?text=${encodeURIComponent(mensaje)}`;
+    const mensaje = construirMensajeWhatsApp(cliente, direccion, horario);
+    const url = `https://wa.me/${NUMERO_WHATSAPP_PIZZERIA}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
 
     const modalEl = document.getElementById('resumenPedidoModal');
@@ -895,7 +1056,7 @@ window.enviarPedidoDefinitivo = function() {
     mostrarMensaje(`¡Pedido de ${cliente} enviado por WhatsApp!`, 'exito');
 
     currentCart = [];
-    if (notasInput) notasInput.value = ''; 
+    ubicacionGPS = null;
     updateCartDisplay();
     renderPizzasArmadas();
 };

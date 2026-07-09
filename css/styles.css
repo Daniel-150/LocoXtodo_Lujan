@@ -48,9 +48,8 @@ h1, h2, h3 {
 
 
 #main-header {
-    /* Mantenemos el fondo oscuro de madera */
+    /* Sólido oscuro, sin imagen de fondo (Background1.jpg es para el hero, no para acá) */
     background-color: var(--color-text-dark); 
-    background-image: url('../assets/images/wood_texture_dark.jpg');
     /* Quitamos el padding global para usar el de Bootstrap */
     padding: 0; 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -86,6 +85,23 @@ h1, h2, h3 {
     padding: 5px 15px;
     color: var(--color-text-light) !important;
 }
+
+#hero-section {
+    position: relative;
+    /* La ruta arranca desde donde esté tu archivo CSS hacia la carpeta de imágenes */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://img.pikbest.com/wp/202408/rustic-vintage-vertical-wooden-texture-background-a-and-feel_9909667.jpg!sw800'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 80vh; /* Le da una buena altura inicial al Hero */
+    z-index: 1;
+}
+
+/* Forzamos que Bootstrap no rompa el comportamiento del contenedor */
+#hero-section .container {
+    position: relative;
+    z-index: 2;
+}
 /* ========================================================= */
 /* 4. ESTILOS DE BOTONES (CTAs) */
 /* ========================================================= */
@@ -103,7 +119,7 @@ h1, h2, h3 {
 }
 
 .btn-primary-cta:hover {
-    background-color: #f755a5; /* Un tono más claro al pasar el mouse */
+    background-color: #570613; /* Un tono más claro al pasar el mouse */
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -127,7 +143,6 @@ h1, h2, h3 {
 
 #main-footer {
     background-color: var(--color-text-dark);
-    background-image: url('../assets/images/wood_texture_dark.jpg'); /* Mismo fondo de madera */
     color: var(--color-text-light);
     padding: 20px;
     text-align: center;
@@ -520,4 +535,24 @@ h1, h2, h3 {
     display: inline-block;
     font-size: 0.7rem;
     transition: transform 0.2s ease;
+}
+/* ========================================================= */
+/* MINIATURA GENÉRICA DE SABOR (agregado para hacer andar imágenes) */
+/* ========================================================= */
+
+/* Agrupa la miniatura + el nombre a la izquierda de la tarjeta */
+.sabor-info-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+/* Misma foto para los 37 sabores por ahora, hasta tener fotos individuales */
+.sabor-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
 }

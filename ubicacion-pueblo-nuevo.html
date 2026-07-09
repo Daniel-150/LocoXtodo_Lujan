@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubicación - Pueblo Nuevo | Loco X Todo Delivery</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <header id="main-header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="pueblo-nuevo.html">
+                <img src="assets/images/logo_locoxtodo.png" alt="Loco X Todo" height="40">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="pueblo-nuevo.html#hero-section">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pueblo-nuevo.html#pedido-section">Pedir Delivery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pueblo-nuevo.html#bebidas-menu-local">Menú Local</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="ubicacion-pueblo-nuevo.html">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+        </header>
+
+    <main>
+        <section class="py-5" style="margin-top: 76px;">
+            <div class="container">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">📍 Encontranos en Pueblo Nuevo</h2>
+                    <p class="text-muted">Sucursal exclusiva delivery — también podés retirar por acá</p>
+                </div>
+
+                <div class="row justify-content-center g-4">
+                    <div class="col-md-6">
+                        <div class="p-4 rounded shadow-sm h-100" style="background-color: var(--color-text-light);">
+                            <h5 class="fw-bold mb-3">Datos de contacto</h5>
+                            <!-- ⚠️ EDITAR: misma dirección que DIRECCION_LOCAL en js/pizzaConfigDelivery.js -->
+                            <p class="mb-2">📍 <strong>Dirección:</strong><br>Av. Siempre Viva 742, Pueblo Nuevo</p>
+                            <!-- ⚠️ EDITAR: horario real de atención -->
+                            <p class="mb-2">🕒 <strong>Horario:</strong><br>Martes a Domingo, 19:00 a 00:00 hs</p>
+                            <!-- ⚠️ EDITAR: mismo número que NUMERO_WHATSAPP_PIZZERIA en js/pizzaConfigDelivery.js -->
+                            <p class="mb-3">📱 <strong>WhatsApp:</strong><br>+54 9 11 2345-6789</p>
+
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=Av.+Siempre+Viva+742,+Pueblo+Nuevo"
+                               target="_blank" rel="noopener" class="btn-primary-cta w-100 text-center d-block">
+                                Cómo llegar 🚗
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <!-- ⚠️ EDITAR: reemplazar la dirección en el "q=" por la real (misma de arriba) -->
+                        <iframe
+                            class="w-100 h-100 rounded shadow-sm"
+                            style="min-height: 320px; border: 0;"
+                            src="https://www.google.com/maps?q=Av.+Siempre+Viva+742,+Pueblo+Nuevo&output=embed"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer">
+        </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
