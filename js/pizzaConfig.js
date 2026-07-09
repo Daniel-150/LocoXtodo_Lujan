@@ -10,6 +10,12 @@ let pizzaActual = [];
 let currentCart = [];
 let pizzaEditandoId = null; // Guarda el ID de la pizza que se está editando
 let listaPizzasExpandida = false; // Si el acordeón de "Pizzas en tu pedido" está desplegado
+let totalPedidoActual = 0; // Total calculado en irAlCheckout, lo usa enviarPedidoDefinitivo
+
+// ⚠️ EDITAR: Reemplazar por el número real de WhatsApp de la pizzería.
+// Formato: código de país + número, todo junto, sin "+", espacios ni guiones.
+// Ejemplo Argentina: 54 9 11 2345-6789 → "5491123456789"
+const NUMERO_WHATSAPP_PIZZERIA = "5491123456789";
 
 /**
  * Calcula subtotal, descuento de la promo multipizza y total de las
@@ -884,6 +890,7 @@ window.irAlCheckout = function() {
         `;
     }
     totalAcumulado -= resumenPizzas.descuento;
+    totalPedidoActual = totalAcumulado;
 
     listaContenedor.innerHTML = htmlProductos;
 
@@ -894,13 +901,63 @@ window.irAlCheckout = function() {
 };
 
 /**
- * Acción final del Modal de Confirmación.
+ * Arma el texto plano del pedido (sin HTML) para mandar por WhatsApp,
+ * con el mismo detalle que ve el cliente en el modal de confirmación.
+ */
+function construirMensajeWhatsApp(cliente, horario) {
+    const lineas = [];
+    lineas.push('🍕 *Nuevo pedido - Loco X Todo*');
+    lineas.push('');
+    lineas.push(`*Cliente:* ${cliente}`);
+    lineas.push(`*Retiro:* ${horario}`);
+    lineas.push('');
+    lineas.push('*Pedido:*');
+
+    currentCart.forEach(item => {
+        const precioItem = item.precioUnidad || 0;
+        if (item.tipo === 'pizza') {
+            lineas.push(`- ${item.nombreProducto}: ${formatearSabores(item.sabores)} — $${precioItem}`);
+        } else {
+            lineas.push(`- ${item.cantidad}x ${item.nombreProducto || item.nombre} — $${precioItem}`);
+        }
+    });
+
+    const resumenPizzas = calcularResumenPizzas();
+    if (resumenPizzas.muzza.descuento > 0) {
+        lineas.push(`Promo Muzzarella (${resumenPizzas.muzza.cantidad} pizzas): -$${resumenPizzas.muzza.descuento}`);
+    }
+    if (resumenPizzas.especial.descuento > 0) {
+        lineas.push(`Promo Especiales (${resumenPizzas.especial.cantidad} pizzas): -$${resumenPizzas.especial.descuento}`);
+    }
+
+    lineas.push('');
+    lineas.push(`*Total: $${totalPedidoActual}*`);
+
+    return lineas.join('\n');
+}
+
+/**
+ * Acción final del Modal de Confirmación: arma el pedido en texto,
+ * abre WhatsApp con todo pre-cargado y limpia el carrito (el pedido
+ * ya "salió" hacia la pizzería).
  */
 window.enviarPedidoDefinitivo = function() {
     const cliente = document.getElementById('lbl-resumen-cliente').textContent;
     const horario = document.getElementById('lbl-resumen-horario').textContent;
-    
-    mostrarMensaje(`¡Pedido de ${cliente} confirmado con éxito!`, 'exito');
+
+    const mensaje = construirMensajeWhatsApp(cliente, horario);
+    const url = `https://wa.me/${NUMERO_WHATSAPP_PIZZERIA}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+
+    const modalEl = document.getElementById('resumenPedidoModal');
+    const modalInstancia = bootstrap.Modal.getInstance(modalEl);
+    if (modalInstancia) modalInstancia.hide();
+
+    mostrarMensaje(`¡Pedido de ${cliente} enviado por WhatsApp!`, 'exito');
+
+    currentCart = [];
+    updateCartDisplay();
+    renderPizzasArmadas();
 };
 
 // =======================================================
