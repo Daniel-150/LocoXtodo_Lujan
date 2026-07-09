@@ -1,66 +1,52 @@
 // =======================================================
-// dataLoader.js: Carga de Datos desde Google Sheets (JSON)
+// dataLoader.js: Punto único de datos del menú
 // =======================================================
+// Combina sabores, bebidas y postres, y les "pega" el precio final
+// (precioLlevar / precioLocal) a cada bebida y postre. No tiene
+// lógica de carga: al ser datos locales, están disponibles apenas
+// se importan.
 
-// !!! MUY IMPORTANTE: La URL DEBE terminar en output=json y apuntar a una URL válida.
-const DATA_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQslem2QSxQVorpfXGxSw90U9UvH6Ng1mFIP0G6inFAgDXFhaTbLc1cVgckOM1surHHWf9iMI0r85tr/pub?output=json'; 
-
-// Array global para almacenar los datos
-let allSabores = [];
-let allBebidas = [];
-let ALL_PRODUCTOS = []; // Variable global para todos los ítems de precio (pizzas base y bebidas)
-let PIZZA_PRECIO_BASE = 0; // Variable global para el precio base (Ej: Pizza Especial Entera)
+import { allSabores } from './pizzaData.js';
+import { allBebidas as bebidasSinPrecio } from './bebidasData.js';
+import { allPostres } from './postresData.js';
+import { PRECIOS_POR_CATEGORIA } from './preciosBebidas.js';
 
 /**
- * Función principal para obtener los datos de la hoja de cálculo.
+ * Le asigna el precio final a cada producto (bebida o postre):
+ * - Si el producto ya trae su propio precioLlevar/precioLocal (como
+ *   los vinos, que no comparten categoría de precio), se respeta tal cual.
+ * - Si no, se busca en la tabla central por su "categoriaPrecio".
  */
-async function loadPizzaData() {
-    try {
-        const response = await fetch(DATA_SHEET_URL);
-        
-        // 🛑 CORRECCIÓN 1: Manejar el error de recibir HTML
-        // Si la URL es incorrecta, Google devuelve HTML. Verificamos el estado.
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
+function resolverPrecios(productos) {
+    return productos.map(producto => {
+        if (producto.precioLlevar !== undefined && producto.precioLocal !== undefined) {
+            return producto;
         }
-        
-        // Usamos .text() primero para depuración si falla, pero mantenemos .json()
-        const data = await response.json(); 
-        
-        // 🛑 CORRECCIÓN 2: Ajustar Filtros por 'sabor' y separar 'bebida'
-        // Tu hoja tiene 'tipo: sabor', no 'tipo: pizza'.
-        allSabores = data
-            .filter(item => item.tipo === 'sabor')
-            .sort((a, b) => a.nombre.localeCompare(b.nombre));
-            
-        // 🛑 CORRECCIÓN 3: Separar TODOS los productos con precio (bases y bebidas)
-        // Usamos !== 'sabor' para incluir bebidas y bases de pizza.
-        ALL_PRODUCTOS = data.filter(item => item.tipo !== 'sabor');
-        
-        // 🛑 CORRECCIÓN 4: Extraer Bebidas y Precio Base
-        allBebidas = ALL_PRODUCTOS.filter(item => item.tipo === 'bebida');
-        
-        const pizzaBaseItem = ALL_PRODUCTOS.find(item => item.nombre.includes('Especial') && item.tipo === 'pizza_base');
-        PIZZA_PRECIO_BASE = pizzaBaseItem ? pizzaBaseItem.precioBase : 13000; // Valor por defecto para evitar errores
-        
-        console.log('Datos de sabores cargados:', allSabores.length);
-        console.log('Datos de bebidas cargados:', allBebidas.length);
-        console.log('Precio base de pizza especial:', PIZZA_PRECIO_BASE);
 
-        // Llamamos a la función que inicia el configurador una vez que los datos están listos
-        initializeConfigurator(allSabores); // Pasamos allSabores si initializeConfigurator lo necesita
+        const tier = PRECIOS_POR_CATEGORIA[producto.categoriaPrecio];
+        if (!tier) {
+            console.warn(`No se encontró precio para la categoría "${producto.categoriaPrecio}" del producto "${producto.nombre}".`);
+            return { ...producto, precioLlevar: 0, precioLocal: 0 };
+        }
 
-    } catch (error) {
-        console.error('Error al cargar datos desde Google Sheets:', error);
-        // Mostrar un mensaje de error al usuario
-        document.getElementById('pedido-list-container').innerHTML = 
-            '<p class="text-danger">No se pudieron cargar los sabores. Por favor, intenta más tarde.</p>';
-    }
+        return { ...producto, precioLlevar: tier.precioLlevar, precioLocal: tier.precioLocal };
+    });
 }
 
-// Iniciar la carga de datos tan pronto como la página se cargue
-document.addEventListener('DOMContentLoaded', loadPizzaData);
+// Bebidas y postres comparten el mismo acordeón/carrito en esta página,
+// así que se combinan en una sola lista ya con los precios resueltos.
+const allBebidas = resolverPrecios([...bebidasSinPrecio, ...allPostres]);
 
-// 🛑 CORRECCIÓN 5: Exportar todas las variables necesarias
-// Exportar las variables para usarlas en otros archivos JS
-export { allSabores, allBebidas, ALL_PRODUCTOS, PIZZA_PRECIO_BASE };
+// Dos niveles de precio de pizza: la muzzarella pura (4/4 muzzarella y
+// nada más) es más barata que cualquier otra combinación ("especial"),
+// incluso si tiene 3/4 muzza y solo 1/4 de otro sabor.
+const PRECIO_MUZZA_PURA = 14000;
+const PRECIO_PIZZA_ESPECIAL = 16000;
+
+const ALL_PRODUCTOS = [
+    { nombre: "Pizza de Muzzarella", tamaño: "entera", precioBase: PRECIO_MUZZA_PURA, tipo: "pizza_base" },
+    { nombre: "Pizza Especial", tamaño: "entera", precioBase: PRECIO_PIZZA_ESPECIAL, tipo: "pizza_base" },
+    ...allBebidas
+];
+
+export { allSabores, allBebidas, ALL_PRODUCTOS, PRECIO_MUZZA_PURA, PRECIO_PIZZA_ESPECIAL };

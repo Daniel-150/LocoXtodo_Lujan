@@ -143,7 +143,7 @@ h1, h2, h3 {
     min-height: 85vh; 
     
     /* Imagen de Fondo (¡Debes tener una imagen de pizza de alta calidad en esta ruta!) */
-    background: url('../img/Background1.jpg') no-repeat center center/cover;
+    background: url('../assets/images/Background1.jpg') no-repeat center center/cover;
     position: relative; /* Necesario para el overlay */
 }
 
@@ -190,4 +190,334 @@ h1, h2, h3 {
         /* Reducir un poco el tamaño de la fuente para que quepa bien */
         font-size: 2.5rem; 
     }
+}
+
+/* Contenedor de la lista de sabores */
+#sabores-list-container {
+    overflow-y: auto;  /* Activa el scroll vertical si el contenido supera el max-height */
+    overflow-x: hidden;
+    padding-right: 5px; /* Espacio para que la barra no pise las tarjetas */
+    transition: max-height 0.2s ease-out; /* Suaviza el ajuste si cambia la altura */
+}
+
+/* Opcional: Customizar la barra de scroll para que quede más estética */
+#sabores-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+#sabores-list-container::-webkit-scrollbar-thumb {
+    background: var(--color-secondary);
+    border-radius: 3px;
+}
+#sabores-list-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* css/styles.css */
+
+/* --- DISEÑO ACCESIBLE DE DOS COLUMNAS CON SCROLL SIMULTÁNEO --- */
+
+/* Tarjeta de Sabor de la Lista (Izquierda) */
+.sabor-card-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #c8c8c8; /* Un poco más oscuro para mejor contraste */
+    border-radius: 8px;
+    padding: 10px 12px; /* Más padding para que el área de toque sea más grande */
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.sabor-card-mini.selected {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #ffffff;
+}
+
+/* Nombre del sabor en la lista - ¡Letra grande y clara! */
+.sabor-name {
+    font-size: 1rem; 
+    font-weight: 700; /* Negrita para facilitar la lectura rápida */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sabor-status-icon {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* --- COLUMNA RESUMEN (Derecha) --- */
+
+/* Ítems del resumen de la pizza armada */
+.selected-sabor-item {
+    padding: 8px 10px !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 6px !important;
+    margin-bottom: 4px;
+    background-color: #fff9f5; /* Un tono cálido sutil para destacar lo elegido */
+}
+
+/* Nombre del sabor en el resumen - ¡IDÉNTICO tamaño al de la lista! */
+.resumen-sabor-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+/* Botón ❌ de eliminación agrandado para que sea fácil de embocarle con el dedo */
+.btn-eliminar-sabor {
+    font-size: 1.1rem !important;
+    line-height: 1;
+}
+
+/* Ajustes específicos para celulares (Menor a 768px) */
+@media (max-width: 767px) {
+    #pedido-section .row {
+        align-items: stretch;
+    }
+    
+    .summary-title {
+        font-size: 1.1rem !important;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    #resumen-columna {
+        padding: 8px !important; /* Minimizamos paddings externos para exprimir la pantalla */
+    }
+
+    /* Botones de acción principales un poco más altos para facilitar el clic */
+    #resumen-columna .btn-primary-cta, 
+    #resumen-columna .btn-secondary {
+        font-size: 0.9rem !important;
+        font-weight: 700;
+        padding: 10px 5px !important;
+    }
+}
+
+/* Contenedor del scroll independiente */
+#sabores-list-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 2px;
+}
+/* css/styles.css */
+
+/* --- CONFIGURACIÓN DE LA LISTA MINI CON SCROLL INDEPENDIENTE --- */
+
+#sabores-list-container {
+    overflow-y: auto !important;  /* Habilita el scroll vertical */
+    overflow-x: hidden !important; /* Evita scrolls horizontales raros */
+    padding-right: 4px;
+    display: block !important;    /* Asegura que funcione como bloque contenedor */
+}
+
+/* Tarjeta compacta e intuitiva */
+.sabor-card-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #c8c8c8;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.sabor-card-mini.selected {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #ffffff;
+}
+
+/* Textos grandes e idénticos en ambas columnas para máxima legibilidad */
+.sabor-name, .resumen-sabor-name {
+    font-size: 1rem !important; 
+    font-weight: 700 !important;
+}
+
+.sabor-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sabor-status-icon {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.selected-sabor-item {
+    padding: 8px 10px !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 6px !important;
+    margin-bottom: 4px;
+    background-color: #fff9f5;
+}
+
+.btn-eliminar-sabor {
+    font-size: 1.1rem !important;
+    line-height: 1;
+}
+
+@media (max-width: 767px) {
+    #pedido-section .row {
+        align-items: stretch;
+    }
+    .summary-title {
+        font-size: 1.1rem !important;
+        font-weight: 700;
+        text-align: center;
+    }
+    #resumen-columna {
+        padding: 8px !important;
+    }
+    #resumen-columna .btn-primary-cta, 
+    #resumen-columna .btn-secondary {
+        font-size: 0.9rem !important;
+        font-weight: 700;
+        padding: 10px 5px !important;
+    }
+}
+
+.empty-sabor-item {
+    padding: 8px 10px !important;
+    border: 1px dashed #cccccc !important; /* Borde discontinuo gris */
+    border-radius: 6px !important;
+    margin-bottom: 4px;
+    background-color: #fafafa;
+    color: #999999;
+}
+
+/* --- STEPPER DE CUARTOS (1/4, 1/2, 3/4, Entera) --- */
+.cuartos-stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-cuarto {
+    background-color: var(--color-secondary);
+    color: var(--color-text-dark);
+    border: none;
+    border-radius: 4px;
+    width: 26px;
+    height: 26px;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.btn-cuarto:hover {
+    opacity: 0.85;
+}
+
+.cuartos-label {
+    font-weight: 700;
+    font-size: 0.85rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Botón de guardar deshabilitado mientras la pizza no suma 4/4 */
+#btn-add-another:disabled,
+#btn-save-edit:disabled {
+    filter: grayscale(40%);
+}
+
+/* --- CUADRITO DE PRESUPUESTO (debajo del botón Guardar) --- */
+.presupuesto-box {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background-color: #fff9f5;
+    border: 1px solid #f0d9c8;
+    border-radius: 8px;
+}
+
+/* Si todavía no hay ninguna pizza guardada, el cuadrito no se muestra */
+.presupuesto-box:empty {
+    display: none;
+    padding: 0;
+    border: none;
+    margin-top: 0;
+}
+
+/* --- MENSAJITOS FLOTANTES (TOASTS) DE ÉXITO/ERROR --- */
+.toast-container {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none; /* Que nunca bloqueen clics debajo */
+    width: 100%;
+    padding: 0 12px;
+}
+
+.toast-mensaje {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #ffffff;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast-mensaje.toast-mostrar {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-exito {
+    background-color: #28a745;
+}
+
+.toast-error {
+    background-color: #dc3545;
+}
+
+/* --- BOTÓN DE DESPLIEGUE DEL ACORDEÓN "PIZZAS EN TU PEDIDO" --- */
+.btn-desplegar-pizzas {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: transparent;
+    border: 1.5px solid var(--color-secondary);
+    color: var(--color-secondary);
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 4px 12px;
+    margin-top: 2px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-desplegar-pizzas:hover {
+    background-color: var(--color-secondary);
+    color: #ffffff;
+}
+
+.btn-desplegar-pizzas .flecha {
+    display: inline-block;
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
 }
