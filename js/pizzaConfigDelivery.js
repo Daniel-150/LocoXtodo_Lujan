@@ -1046,7 +1046,7 @@ window.enviarPedidoDefinitivo = function() {
     const horario = document.getElementById('lbl-resumen-horario').textContent;
 
     const mensaje = construirMensajeWhatsApp(cliente, direccion, horario);
-    const url = `https://wa.me/${NUMERO_WHATSAPP_PIZZERIA}?text=${encodeURIComponent(mensaje)}`;
+    const url = `https://wa.me/${5492323527915}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
 
     const modalEl = document.getElementById('resumenPedidoModal');
