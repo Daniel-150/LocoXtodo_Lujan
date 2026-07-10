@@ -556,3 +556,14 @@ h1, h2, h3 {
     object-fit: cover;
     flex-shrink: 0;
 }
+
+/* Miniatura de bebida/postre en el acordeón. A diferencia de .sabor-thumb,
+   si la imagen puntual no existe se oculta (onerror en el HTML) en vez de
+   caer en una foto genérica, porque acá no hay un "default" que tenga sentido. */
+.bebida-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}

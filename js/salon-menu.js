@@ -45,7 +45,7 @@ function renderSabores(sabores) {
         card.innerHTML = `
             <div class="item-img-container">
                 <img src="${RUTA_FOTOS}${sabor.imagen}${EXTENSION_FOTOS}" alt="${sabor.nombre}" 
-                     onerror="this.onerror=null; this.src='https://placehold.co/220x140?text=🍕';">
+                     onerror="this.onerror=null; this.src='${RUTA_FOTOS}muzzarela.jpg';">
             </div>
             <div class="item-details">
                 <div class="d-flex flex-column mb-1">

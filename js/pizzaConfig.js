@@ -87,9 +87,17 @@ function nombrePizza(sabores) {
  * Calcula subtotal, descuento y total de un grupo de pizzas del mismo precio base.
  */
 function calcularResumenGrupo(cantidad, precioBase) {
+    if (cantidad === 0) return { cantidad: 0, subtotal: 0, descuento: 0, total: 0 };
+
+    // La promo se activa a partir de la 2da pizza del mismo tipo: ahí,
+    // CADA pizza de ese tipo (no solo las "extra") sale con $1000 de descuento.
+    const aplicaPromo = cantidad >= 2;
+    const precioConPromo = aplicaPromo ? precioBase - PROMO_DESCUENTO_POR_PIZZA_ADICIONAL : precioBase;
+
     const subtotal = precioBase * cantidad;
-    const descuento = cantidad > 1 ? PROMO_DESCUENTO_POR_PIZZA_ADICIONAL * (cantidad - 1) : 0;
-    const total = subtotal - descuento;
+    const total = precioConPromo * cantidad;
+    const descuento = subtotal - total;
+
     return { cantidad, subtotal, descuento, total };
 }
 
@@ -173,12 +181,14 @@ function initializeConfigurator() {
  */
 function createSaborCard(sabor) {
     const elegido = pizzaActual.find(item => item.sabor === sabor.nombre);
+    // Intenta la foto propia del sabor; si no existe o falla, cae en la muzza por defecto.
+    const imgTag = `<img src="assets/images/${sabor.imagen}.jpg" alt="" class="sabor-thumb" onerror="this.onerror=null; this.src='assets/images/muzzarela.jpg';">`;
 
     if (!elegido) {
         return `
             <div class="sabor-card-mini" onclick="toggleSabor('${sabor.nombre}')">
                 <div class="sabor-info-mini">
-                    <img src="assets/images/muzzarela.jpg" alt="" class="sabor-thumb">
+                    ${imgTag}
                     <span class="sabor-name">${sabor.nombre}</span>
                 </div>
                 <span class="sabor-status-icon">+</span>
@@ -189,7 +199,7 @@ function createSaborCard(sabor) {
     return `
         <div class="sabor-card-mini selected">
             <div class="sabor-info-mini">
-                <img src="assets/images/muzzarela.jpg" alt="" class="sabor-thumb">
+                ${imgTag}
                 <span class="sabor-name">${sabor.nombre}</span>
             </div>
             <div class="cuartos-stepper">
@@ -612,10 +622,13 @@ window.showBebidasSection = function() {
 
                                 return `
                                     <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom-0">
-                                        <div style="max-width: 60%;">
-                                            <h6 class="mb-0 fw-bold text-dark" style="font-size: 1rem;">${b.nombre}</h6>
-                                            <small class="text-muted d-block" style="font-size: 0.85rem;">Tamaño: ${b.tamaño || 'Individual'}</small>
-                                            <strong class="text-success" style="font-size: 1rem;">$${b.precioLlevar}</strong>
+                                        <div class="d-flex align-items-center" style="max-width: 60%; gap: 10px;">
+                                            <img src="assets/images/${b.imagen}.jpg" alt="" class="bebida-thumb" onerror="this.style.display='none';">
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark" style="font-size: 1rem;">${b.nombre}</h6>
+                                                <small class="text-muted d-block" style="font-size: 0.85rem;">Tamaño: ${b.tamaño || 'Individual'}</small>
+                                                <strong class="text-success" style="font-size: 1rem;">$${b.precioLlevar}</strong>
+                                            </div>
                                         </div>
                                         <div class="contenedor-control-bebida">
                                             ${botonHTML}

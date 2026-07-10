@@ -19,7 +19,7 @@ const DIRECCION_LOCAL = "Av. Siempre Viva 742";
 // ⚠️ EDITAR: Reemplazar por el número real de WhatsApp de la sucursal PUEBLO NUEVO.
 // Formato: código de país + número, todo junto, sin "+", espacios ni guiones.
 // Ejemplo Argentina: 54 9 11 2345-6789 → "5491123456789"
-const NUMERO_WHATSAPP_PIZZERIA = "5491123456789";
+const NUMERO_WHATSAPP_PIZZERIA = "5492323527915";
 
 /**
  * Calcula subtotal, descuento de la promo multipizza y total de las

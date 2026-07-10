@@ -10,7 +10,7 @@
 
 const allBebidas = [
     // --- Gaseosas línea Pepsi ---
-    { id: 101, nombre: "Pepsi",              categoria: "Gaseosas Línea Pepsi", categoriaPrecio: "Gaseosa", tamaño: "1.5L", imagen: "pepsi",        tipo: "bebida" },
+    { id: 101, nombre: "Pepsi",              categoria: "Gaseosas Línea Pepsi", categoriaPrecio: "Gaseosa", tamaño: "1.5L", imagen: "assets/images/pepsiLitro.jpg",        tipo: "bebida" },
     { id: 102, nombre: "7up",                categoria: "Gaseosas Línea Pepsi", categoriaPrecio: "Gaseosa", tamaño: "1.5L", imagen: "7up",          tipo: "bebida" },
     { id: 103, nombre: "Mirinda",            categoria: "Gaseosas Línea Pepsi", categoriaPrecio: "Gaseosa", tamaño: "1.5L", imagen: "mirinda",      tipo: "bebida" },
     { id: 104, nombre: "Paso de los Toros",  categoria: "Gaseosas Línea Pepsi", categoriaPrecio: "Gaseosa", tamaño: "1.5L", imagen: "paso_toros",   tipo: "bebida" },

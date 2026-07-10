@@ -28,7 +28,7 @@ const allSabores = [
     { id: 18, nombre: "Jamón",                         descripcion: "Muzzarella y jamón cocido.",                           imagen: "jamon",             tipo: "sabor" },
     { id: 19, nombre: "Jamón y Ananá",                 descripcion: "Muzzarella, jamón y ananá.",                           imagen: "jamon_anana",       tipo: "sabor" },
     { id: 20, nombre: "Jamón y Morrón",                descripcion: "La clásica combinación de jamón y morrón.",            imagen: "jamon_morron",      tipo: "sabor" },
-    { id: 21, nombre: "Muzzarella",                    descripcion: "Salsa de tomate y muzzarella.",                        imagen: "muzzarella",        tipo: "sabor" },
+    { id: 21, nombre: "Muzzarella",                    descripcion: "Clasica de muzzarella.",                        imagen: "muzzarella",        tipo: "sabor" },
     { id: 22, nombre: "Napolitana",                    descripcion: "Muzzarella, jamon y tomate.",                 imagen: "napolitana",        tipo: "sabor" },
     { id: 23, nombre: "Palmitos",                      descripcion: "Muzzarella y palmitos con salsa golf.",                               imagen: "palmitos",          tipo: "sabor" },
     { id: 24, nombre: "Panceta",                       descripcion: "Muzzarella y panceta.",                        imagen: "panceta",           tipo: "sabor" },
