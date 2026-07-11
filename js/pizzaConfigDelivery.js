@@ -100,9 +100,17 @@ function nombrePizza(sabores) {
  * de forma independiente para cada grupo (muzza pura vs especial).
  */
 function calcularResumenGrupo(cantidad, precioBase) {
+    if (cantidad === 0) return { cantidad: 0, subtotal: 0, descuento: 0, total: 0 };
+
+    // La promo se activa a partir de la 2da pizza del mismo tipo: ahí,
+    // CADA pizza de ese tipo (no solo las "extra") sale con $1000 de descuento.
+    const aplicaPromo = cantidad >= 2;
+    const precioConPromo = aplicaPromo ? precioBase - PROMO_DESCUENTO_POR_PIZZA_ADICIONAL : precioBase;
+
     const subtotal = precioBase * cantidad;
-    const descuento = cantidad > 1 ? PROMO_DESCUENTO_POR_PIZZA_ADICIONAL * (cantidad - 1) : 0;
-    const total = subtotal - descuento;
+    const total = precioConPromo * cantidad;
+    const descuento = subtotal - total;
+
     return { cantidad, subtotal, descuento, total };
 }
 function fraccionTexto(cuartos) {
